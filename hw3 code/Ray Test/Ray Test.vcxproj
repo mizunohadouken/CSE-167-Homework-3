@@ -75,7 +75,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Freeimage;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Freeimage;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)Freeimage;$(SolutionDir)Dependencies\GLFW\lib-vc2015</AdditionalLibraryDirectories>
@@ -96,7 +96,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Freeimage;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Freeimage;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -119,7 +119,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="film.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="primitive.cpp" />
+    <ClCompile Include="raytracer.cpp" />
+    <ClCompile Include="sampler.cpp" />
+    <ClCompile Include="scene.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="film.h" />
+    <ClInclude Include="primitive.h" />
+    <ClInclude Include="raytracer.h" />
+    <ClInclude Include="sampler.h" />
+    <ClInclude Include="scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

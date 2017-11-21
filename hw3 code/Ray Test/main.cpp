@@ -1,34 +1,121 @@
 #include <iostream>
 #include "FreeImage.h"
 #include <GLFW/glfw3.h>
+#include "glm.hpp"
+#include "camera.h"
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+// TODO Remove this test code -------------
+void print3x3Matrix(glm::mat3 mPrintMe)
+{
+	std::cout << mPrintMe[0][0] << " ";
+	std::cout << mPrintMe[1][0] << " ";
+	std::cout << mPrintMe[2][0] << "\n";
+	std::cout << mPrintMe[0][1] << " ";
+	std::cout << mPrintMe[1][1] << " ";
+	std::cout << mPrintMe[2][1] << "\n";
+	std::cout << mPrintMe[0][2] << " ";
+	std::cout << mPrintMe[1][2] << " ";
+	std::cout << mPrintMe[2][2] << " ";
+
+	return;
+}
+
+void print4x4Matrix(glm::mat4 mPrintMe)
+{
+	std::cout << mPrintMe[0][0] << " ";
+	std::cout << mPrintMe[1][0] << " ";
+	std::cout << mPrintMe[2][0] << " ";
+	std::cout << mPrintMe[3][0] << "\n";
+	std::cout << mPrintMe[0][1] << " ";
+	std::cout << mPrintMe[1][1] << " ";
+	std::cout << mPrintMe[2][1] << " ";
+	std::cout << mPrintMe[3][1] << "\n";
+	std::cout << mPrintMe[0][2] << " ";
+	std::cout << mPrintMe[1][2] << " ";
+	std::cout << mPrintMe[2][2] << " ";
+	std::cout << mPrintMe[3][2] << "\n";
+	std::cout << mPrintMe[0][3] << " ";
+	std::cout << mPrintMe[1][3] << " ";
+	std::cout << mPrintMe[2][3] << " ";
+	std::cout << mPrintMe[3][3] << "\n";
+	return;
+}
+
+void printvec3(glm::vec3 vPrintMe)
+{
+	std::cout << "Vector x: " << vPrintMe.x << "\n";
+	std::cout << "Vector y: " << vPrintMe.y << "\n";
+	std::cout << "Vector z: " << vPrintMe.z << "\n";
+
+}
+
+// End Test Code
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 int main(int argc, char *argv[])
 {
-	
-	FreeImage_Initialise();
+	// TODO change variables based on parser (scene)!!!!!!!!!!!!!!
+	// Test Scene 1 Variables !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//Size
+	const int Width = 640, Height = 480, BitsPerPixel = 24;
+	// Camera
+	glm::vec3 LookFrom = glm::vec3(0, 0, 4);
+	glm::vec3 LookAt = glm::vec3(0, 0, 0);
+	glm::vec3 UpVec = glm::vec3(0, 1, 0);
+	float fov = 30;
+	// other
+	glm::vec3 ambient = glm::vec3(.1, .1, .1);
+	glm::vec3 diffuse = glm::vec3(1, 0, 0);
+	glm::vec3 specular = glm::vec3(0, 0, 0);
+	// lights
+	glm::vec3 point_light_dir = glm::vec3(4, 0, 4);
+	glm::vec3 point_light_color = glm::vec3(.5, .5, .5);
+	glm::vec3 directional_light_dir = glm::vec3(0, 0, 1);
+	glm::vec3 directional_light_color = glm::vec3(.5, .5, .5);
+	// geometry
+	int maxverts = 4;
+	glm::vec3 vertex1 = glm::vec3(-1, -1, 0);
+	glm::vec3 vertex2 = glm::vec3(1, -1, 0);
+	glm::vec3 vertex3 = glm::vec3(1, 1, 0);
+	glm::vec3 vertex4 = glm::vec3(-1, 1, 0);
+	glm::vec3 triangle1 = glm::vec3(0, 1, 2);
+	glm::vec3 triangle2 = glm::vec3(0, 2, 3);
+	// End Test Scene 1 Variables !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	int Width = 500, Height = 500, BitsPerPixel = 24; // TODO change variables based on parser
 
+	BYTE temp_arr[3*Width*Height];
+	BYTE *pixel_array = temp_arr;//new BYTE[3*Width*Height];
 
-	FIBITMAP *bitmap = FreeImage_Allocate(Width, Height, BitsPerPixel);
-	RGBQUAD color;
-
-	for (int i = 0; i < Width; i++)
+	for (int i = 0; i < Height; i++)
 	{
-		for (int j = 0; j < Height; j++)
+		for (int j = 0; j < Width;j++)
 		{
-			color.rgbRed = (double)i / Width * 255.0;
-			color.rgbGreen = 0;
-			color.rgbGreen = (double)j / Height * 255.0;
-			FreeImage_SetPixelColor(bitmap, i, j, &color);
+			int slot = 3 * ((Height - i - 1)*Width + j);
+			*(pixel_array + 0 + slot) = i*.255;
+			*(pixel_array + 1 + slot) = i*.955;
+			*(pixel_array + 2 + slot) = i*.555;
 		}
 	}
 
-	FreeImage_Save(FIF_PNG, bitmap, "filename.png", 0);
+	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixel_array, Width, Height, Width * 3, 24, 0xFF0000, 0xFF0000, 0xFF0000, false);
+	FreeImage_Save(FIF_PNG, img, "filename.png", 0);
+
+//!!!!!!!!!!!!!!!!!!Testing ground
+	glm::vec3 from = glm::vec3(3, 1, 2);
+	glm::vec3 to = glm::vec3(0, 0, 0);
+	glm::vec3 up = glm::vec3(0, 1, 0);
+
+	printvec3(normalize(from));
+
+	//!!!!!!!!!!!!!!End testing ground
+	
 
 
-
-	// Display Test
+	// Display Text
 	std::cout << "Free Image_" << FreeImage_GetVersion() << "\n";
 	std::cout << FreeImage_GetCopyrightMessage() << "\n\n";
 	FreeImage_DeInitialise();
