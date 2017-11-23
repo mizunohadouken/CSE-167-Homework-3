@@ -98,6 +98,7 @@ glm::vec3 camera::upvector(const glm::vec3 &up, const glm::vec3 & zvec)
 	return ret;
 }
 
+// TODO verify ray hitting center of pixel
 ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy, int width, int height, int i_pixel, int j_pixel)
 {
 	glm::mat4 coor_frame = camera::make_coordinate_frame(eye, center, up);

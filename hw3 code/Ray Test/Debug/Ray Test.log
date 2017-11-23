@@ -1,10 +1,7 @@
 ﻿  main.cpp
-c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(99): warning C4244: '=': conversion from 'double' to 'BYTE', possible loss of data
-c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(100): warning C4244: '=': conversion from 'double' to 'BYTE', possible loss of data
-c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(101): warning C4244: '=': conversion from 'double' to 'BYTE', possible loss of data
-  film.cpp
-  camera.cpp
-c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\camera.cpp(7): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\camera.cpp(49): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(111): warning C4244: '=': conversion from 'double' to 'BYTE', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(112): warning C4244: '=': conversion from 'double' to 'BYTE', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(113): warning C4244: '=': conversion from 'double' to 'BYTE', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(121): warning C4101: 'x1': unreferenced local variable
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(121): warning C4101: 'x0': unreferenced local variable
   Ray Test.vcxproj -> C:\Users\Andrew\Desktop\Courses\CSE167\Homework 3\hw3 code\Debug\Ray Test.exe

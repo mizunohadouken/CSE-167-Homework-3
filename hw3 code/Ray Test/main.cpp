@@ -1,11 +1,14 @@
 #include <iostream>
-#include "FreeImage.h"
-#include <GLFW/glfw3.h>
 #include "glm.hpp"
-#include "camera.h"
-
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "FreeImage.h"
+#include <GLFW/glfw3.h>
+
+#include "camera.h"
+#include "primitive.h"
+#include <algorithm>
+
 
 // TODO Remove this test code -------------
 void print3x3Matrix(glm::mat3 mPrintMe)
@@ -52,8 +55,11 @@ void printvec3(glm::vec3 vPrintMe)
 
 }
 
+void print_float(float x) { std::cout << "Value: " << x << "\n"; }
 // End Test Code
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 
 int main(int argc, char *argv[])
 {
@@ -65,7 +71,7 @@ int main(int argc, char *argv[])
 	glm::vec3 LookFrom = glm::vec3(0, 0, 4);
 	glm::vec3 LookAt = glm::vec3(0, 0, 0);
 	glm::vec3 UpVec = glm::vec3(0, 1, 0);
-	float fov = 30;
+	float fovy = 30;
 	// other
 	glm::vec3 ambient = glm::vec3(.1, .1, .1);
 	glm::vec3 diffuse = glm::vec3(1, 0, 0);
@@ -89,11 +95,18 @@ int main(int argc, char *argv[])
 
 	BYTE temp_arr[3*Width*Height];
 	BYTE *pixel_array = temp_arr;//new BYTE[3*Width*Height];
+	camera scene_cam;
+
 
 	for (int i = 0; i < Height; i++)
 	{
 		for (int j = 0; j < Width;j++)
 		{
+			ray ray_through_pixel = scene_cam.create_ray(LookFrom, LookAt, UpVec, fovy, Width, Height, i, j);
+
+
+
+
 			int slot = 3 * ((Height - i - 1)*Width + j);
 			*(pixel_array + 0 + slot) = i*.255;
 			*(pixel_array + 1 + slot) = i*.955;
@@ -105,11 +118,12 @@ int main(int argc, char *argv[])
 	FreeImage_Save(FIF_PNG, img, "filename.png", 0);
 
 //!!!!!!!!!!!!!!!!!!Testing ground
-	glm::vec3 from = glm::vec3(3, 1, 2);
-	glm::vec3 to = glm::vec3(0, 0, 0);
-	glm::vec3 up = glm::vec3(0, 1, 0);
+	float a = 2, b = -8, c = -24, x0, x1;
+	glm::vec3 test_vec = glm::vec3(1, 2, 3);
+	glm::vec3 test_vec2 = glm::vec3(4, 2, 3);
 
-	printvec3(normalize(from));
+	sphere test_sphere(test_vec, 2);
+	print_float(test_sphere.get_radius());
 
 	//!!!!!!!!!!!!!!End testing ground
 	
