@@ -8,19 +8,18 @@ raytracer::~raytracer()
 {
 }
 
-bool raytracer::trace_ray_to_primitive(const ray &rayshot, const std::vector<std::unique_ptr<primitive>> &scene_primitives, float & out_tNear, const primitive *& out_primitive_hit)
+bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitive*> scene_primitives, float & out_tNear, const primitive *& out_primitive_hit)
 {
 	out_tNear = INFINITY;
 
 	// iterate through all scene primitives
-	std::vector<std::unique_ptr<primitive>>::const_iterator iterator = scene_primitives.begin();
+	std::vector<primitive*>::iterator iterator = scene_primitives.begin();
 	for (; iterator != scene_primitives.end(); ++iterator)
 	{
 		float out_temp_t = INFINITY;
-
 		if ((*iterator)->intersect(rayshot, out_temp_t) && out_temp_t < out_tNear)
 		{
-			out_primitive_hit = iterator->get();
+			out_primitive_hit = *iterator;
 			out_tNear = out_temp_t;
 		}
 	}
@@ -29,7 +28,7 @@ bool raytracer::trace_ray_to_primitive(const ray &rayshot, const std::vector<std
 	return (out_primitive_hit != nullptr);
 }
 
-glm::vec3 raytracer::compute_pixel_color(const ray & rayshot, const std::vector<std::unique_ptr<primitive>>& scene_primitives)
+glm::vec3 raytracer::compute_pixel_color(const ray & rayshot, std::vector<primitive*> scene_primitives)
 {
 	glm::vec3 hit_color = glm::vec3(0);
 	const primitive *primitive_hit = nullptr;
@@ -39,8 +38,8 @@ glm::vec3 raytracer::compute_pixel_color(const ray & rayshot, const std::vector<
 	{
 		// TODO complete algorithm to determine pixel color
 		hit_color[0] = 255;
-		hit_color[1] = 1;
-		hit_color[2] = 1;
+		hit_color[1] = 255;
+		hit_color[2] = 255;
 // TODO remove		std::cout << "it's true yo\n";
 	}
 

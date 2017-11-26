@@ -12,7 +12,23 @@
 #include <algorithm>
 
 
+// TODO remove
+// !!!!!!!!!!!!!
 
+void test_line(std::string section_string)
+{
+	std::cout << "made it to: " << section_string << "\n";
+}
+
+
+void printvec3(glm::vec3 vPrintMe)
+{
+	std::cout << "Vector x: " << vPrintMe.x << "\n";
+	std::cout << "Vector y: " << vPrintMe.y << "\n";
+	std::cout << "Vector z: " << vPrintMe.z << "\n";
+
+}
+// !!!!!!!!!!!!!!!!!!!!
 
 
 int main(int argc, char *argv[])
@@ -51,6 +67,15 @@ int main(int argc, char *argv[])
 	scene scene;
 	scene.readfile(argv[1]);
 
+	// TODO remove testing ground
+	// !!!!!!!!!!!!!!!!!!!!!!!!!
+	printvec3(scene.LookAt);
+	std::cout << scene.width << " " << scene.height;
+
+//	scene.v_primitives->
+	// !!!!!!!!!!!!!
+	// !!!!!!!!!!!!!
+
 
 	BYTE temp_arr[3*Width*Height];
 	BYTE *pixel_array = temp_arr;//new BYTE[3*Width*Height];
@@ -64,14 +89,16 @@ int main(int argc, char *argv[])
 			ray ray_through_pixel = scene_cam.create_ray(LookFrom, LookAt, UpVec, fovy, Width, Height, i, j);
 
 			//!!!!!!!!!!!!!!!!!!Testing ground
-			glm::vec3 sphere_test_vec = glm::vec3(-1.f, -0.5f, -0.5f);
+			glm::vec3 sphere_test_vec = glm::vec3(1.f, -0.5f, -0.5f);
+			glm::vec3 sphere_test_vec2 = glm::vec3(-1.f, -0.5f, -0.5f);
 			float sphere_test_radius = .15f;
 
-			std::vector<std::unique_ptr <primitive>> primitives;
-			primitives.push_back(std::unique_ptr<primitive>(new sphere(sphere_test_vec, sphere_test_radius)));
-
+			std::vector<primitive*> primitives;
+			primitives = scene.v_primitives;
 			glm::vec3 color_vec;
 			color_vec = raytracer::compute_pixel_color(ray_through_pixel, primitives);
+
+			
 			//!!!!!!!!!!!!!!End testing ground
 
 			int slot = 3 * ((Height - i - 1)*Width + j);
