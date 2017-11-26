@@ -5,73 +5,29 @@
 #include "FreeImage.h"
 #include <GLFW/glfw3.h>
 
+#include "scene.h"
 #include "camera.h"
 #include "primitive.h"
+#include "raytracer.h"
 #include <algorithm>
 
 
-// TODO Remove this test code -------------
-void print3x3Matrix(glm::mat3 mPrintMe)
-{
-	std::cout << mPrintMe[0][0] << " ";
-	std::cout << mPrintMe[1][0] << " ";
-	std::cout << mPrintMe[2][0] << "\n";
-	std::cout << mPrintMe[0][1] << " ";
-	std::cout << mPrintMe[1][1] << " ";
-	std::cout << mPrintMe[2][1] << "\n";
-	std::cout << mPrintMe[0][2] << " ";
-	std::cout << mPrintMe[1][2] << " ";
-	std::cout << mPrintMe[2][2] << " ";
-
-	return;
-}
-
-void print4x4Matrix(glm::mat4 mPrintMe)
-{
-	std::cout << mPrintMe[0][0] << " ";
-	std::cout << mPrintMe[1][0] << " ";
-	std::cout << mPrintMe[2][0] << " ";
-	std::cout << mPrintMe[3][0] << "\n";
-	std::cout << mPrintMe[0][1] << " ";
-	std::cout << mPrintMe[1][1] << " ";
-	std::cout << mPrintMe[2][1] << " ";
-	std::cout << mPrintMe[3][1] << "\n";
-	std::cout << mPrintMe[0][2] << " ";
-	std::cout << mPrintMe[1][2] << " ";
-	std::cout << mPrintMe[2][2] << " ";
-	std::cout << mPrintMe[3][2] << "\n";
-	std::cout << mPrintMe[0][3] << " ";
-	std::cout << mPrintMe[1][3] << " ";
-	std::cout << mPrintMe[2][3] << " ";
-	std::cout << mPrintMe[3][3] << "\n";
-	return;
-}
-
-void printvec3(glm::vec3 vPrintMe)
-{
-	std::cout << "Vector x: " << vPrintMe.x << "\n";
-	std::cout << "Vector y: " << vPrintMe.y << "\n";
-	std::cout << "Vector z: " << vPrintMe.z << "\n";
-
-}
-
-void print_float(float x) { std::cout << "Value: " << x << "\n"; }
-// End Test Code
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 
 int main(int argc, char *argv[])
 {
+
+
 	// TODO change variables based on parser (scene)!!!!!!!!!!!!!!
 	// Test Scene 1 Variables !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//Size
 	const int Width = 640, Height = 480, BitsPerPixel = 24;
 	// Camera
-	glm::vec3 LookFrom = glm::vec3(0, 0, 4);
+	glm::vec3 LookFrom = glm::vec3(-2, -2, 2);
 	glm::vec3 LookAt = glm::vec3(0, 0, 0);
-	glm::vec3 UpVec = glm::vec3(0, 1, 0);
-	float fovy = 30;
+	glm::vec3 UpVec = glm::vec3(1, 1, 2);
+	float fovy = 60;
 	// other
 	glm::vec3 ambient = glm::vec3(.1, .1, .1);
 	glm::vec3 diffuse = glm::vec3(1, 0, 0);
@@ -92,6 +48,9 @@ int main(int argc, char *argv[])
 	// End Test Scene 1 Variables !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+	scene scene;
+	scene.readfile(argv[1]);
+
 
 	BYTE temp_arr[3*Width*Height];
 	BYTE *pixel_array = temp_arr;//new BYTE[3*Width*Height];
@@ -104,28 +63,30 @@ int main(int argc, char *argv[])
 		{
 			ray ray_through_pixel = scene_cam.create_ray(LookFrom, LookAt, UpVec, fovy, Width, Height, i, j);
 
+			//!!!!!!!!!!!!!!!!!!Testing ground
+			glm::vec3 sphere_test_vec = glm::vec3(-1.f, -0.5f, -0.5f);
+			float sphere_test_radius = .15f;
 
+			std::vector<std::unique_ptr <primitive>> primitives;
+			primitives.push_back(std::unique_ptr<primitive>(new sphere(sphere_test_vec, sphere_test_radius)));
 
+			glm::vec3 color_vec;
+			color_vec = raytracer::compute_pixel_color(ray_through_pixel, primitives);
+			//!!!!!!!!!!!!!!End testing ground
 
 			int slot = 3 * ((Height - i - 1)*Width + j);
-			*(pixel_array + 0 + slot) = i*.255;
-			*(pixel_array + 1 + slot) = i*.955;
-			*(pixel_array + 2 + slot) = i*.555;
+			*(pixel_array + 0 + slot) = color_vec[0];
+			*(pixel_array + 1 + slot) = color_vec[1];
+			*(pixel_array + 2 + slot) = color_vec[2];
+
 		}
 	}
+
 
 	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixel_array, Width, Height, Width * 3, 24, 0xFF0000, 0xFF0000, 0xFF0000, false);
 	FreeImage_Save(FIF_PNG, img, "filename.png", 0);
 
-//!!!!!!!!!!!!!!!!!!Testing ground
-	float a = 2, b = -8, c = -24, x0, x1;
-	glm::vec3 test_vec = glm::vec3(1, 2, 3);
-	glm::vec3 test_vec2 = glm::vec3(4, 2, 3);
 
-	sphere test_sphere(test_vec, 2);
-	print_float(test_sphere.get_radius());
-
-	//!!!!!!!!!!!!!!End testing ground
 	
 
 

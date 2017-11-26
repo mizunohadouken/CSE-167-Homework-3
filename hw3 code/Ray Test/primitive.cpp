@@ -28,7 +28,7 @@ bool sphere::intersect(const ray ray_shot, float & out_t)
 		out_t0,
 		out_t1;
 
-	if (solve_quadratic(a, b, c, out_t0, out_t1)) return false;
+	if (!solve_quadratic(a, b, c, out_t0, out_t1)) return false;
 
 	if (out_t0 > out_t1) std::swap(out_t0, out_t1);
 	if (out_t0 < 0)

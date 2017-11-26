@@ -4,7 +4,7 @@
 // Helper rotation function
 glm::mat3 camera::rotate(const float degrees, const glm::vec3& axis)
 {
-	float radians = degrees*M_PI / 180.0;
+	float radians = degrees*M_PI / 180.0f;
 	glm::vec3 axis_normal = normalize(axis);
 
 	glm::mat3 mRotation(0); // rotation matrix to return
@@ -46,7 +46,7 @@ glm::mat4 camera::perspective(float fovy, float aspect, float zNear, float zFar)
 	glm::mat4 ret;
 
 	// New, to implement the perspective transform as well.  
-	float d = 1 / (tan((fovy * M_PI) / (2 * 180)));
+	float d = 1.0f / (tan((fovy * M_PI) / (2 * 180)));
 	float A = -(zFar + zNear) / (zFar - zNear);
 	float B = -(2 * zFar * zNear) / (zFar - zNear);
 
@@ -108,9 +108,11 @@ ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy
 	glm::vec3 v = glm::vec3(coor_frame[0][1], coor_frame[1][1], coor_frame[2][1]);
 	glm::vec3 w = glm::vec3(coor_frame[0][2], coor_frame[1][2], coor_frame[2][2]);
 
-	float tan_fovx2 = tan(fovy / 2)*width / height;
-	float alpha = tan_fovx2 * ((j_pixel - (width / 2)) / (width / 2));
-	float beta = tan(fovy / 2) * (((height / 2) - i_pixel) / (height / 2));
+	fovy = fovy*M_PI / 180.0f;  // Convert degrees to rads
+
+	float tan_fovx2 = tan(fovy / 2.0f)*width / height;
+	float alpha = tan_fovx2 * ((j_pixel - (width / 2.0f)) / (width / 2.0f));
+	float beta = tan(fovy / 2.0f) * (((height / 2.0f) - i_pixel) / (height / 2.0f));
 
 	glm::vec3 ray_dir_temp = alpha*u + beta*v - w;
 	ray ray_shot(eye, glm::normalize(ray_dir_temp));

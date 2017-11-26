@@ -131,6 +131,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="film.h" />
     <ClInclude Include="primitive.h" />
+    <ClInclude Include="print_helpers.h" />
     <ClInclude Include="raytracer.h" />
     <ClInclude Include="sampler.h" />
     <ClInclude Include="scene.h" />
