@@ -12,6 +12,10 @@ public:
 	virtual ~primitive();
 	virtual bool intersect(const ray ray_shot, float &out_t);
 
+	// material properties
+	glm::vec3 prim_diffuse, prim_specular, prim_emission;
+	float prim_shininess;
+
 private:
 };
 
@@ -27,4 +31,14 @@ private:
 	glm::vec3 center;
 	float radius;
 	float radius_sq;
+};
+
+class triangle : public primitive
+{
+public:
+	triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con);
+//	bool intersect(const ray ray_shot, float &out_t);
+
+	glm::vec3 v0, v1, v2, tri_normal;
+private:
 };

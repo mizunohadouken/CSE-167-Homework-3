@@ -63,3 +63,11 @@ void test_line(std::string section_string)
 {
 	std::cout << "made it to: " << section_string << "\n";
 }
+
+void print_array_of_vectors(std::vector<glm::vec3> vec)
+{
+	for (int i = 0; i < vec.size(); i++)
+	{
+		printvec3(vec[i]);
+	}
+}

@@ -1,9 +1,5 @@
 #include "scene.h"
 
-
-
-
-
 void scene::readfile(const char * filename)
 {
 
@@ -64,13 +60,70 @@ void scene::readfile(const char * filename)
 						height = values[1];
 					}
 				}
+
+				// lights
+				else if (cmd == "ambient")
+				{
+					validinput = readvals(s, 3, values);
+					ambient = glm::vec3(values[0], values[1], values[2]);
+				}
+
+				// material properties
+				else if (cmd == "diffuse")
+				{
+					validinput = readvals(s, 3, values);
+					diffuse = glm::vec3(values[0], values[1], values[2]);
+				}
+				else if (cmd == "specular")
+				{
+					validinput = readvals(s, 3, values);
+					specular = glm::vec3(values[0], values[1], values[2]);
+				}
+				else if (cmd == "emission")
+				{
+					validinput = readvals(s, 3, values);
+					emission = glm::vec3(values[0], values[1], values[2]);
+				}
+				else if (cmd == "shininess")
+				{
+					validinput = readvals(s, 1, values);
+					shininess = values[0];
+				}
+
+				//geometry
+				else if (cmd == "maxverts")
+				{
+					validinput = readvals(s, 1, values);
+					max_verts = values[0];
+				}
+				else if (cmd == "vertex")
+				{
+					validinput = readvals(s, 3, values);
+					v_vertices.push_back(glm::vec3(values[0], values[1], values[2]));
+				}
+				else if (cmd == "tri")
+				{
+					validinput = readvals(s, 3, values);
+					v_primitives.push_back(new triangle(v_vertices[values[0]],
+														v_vertices[values[1]],
+														v_vertices[values[2]]));
+					// assign material properties
+					v_primitives.back()->prim_diffuse = diffuse;
+					v_primitives.back()->prim_specular = specular;
+					v_primitives.back()->prim_emission = emission;
+					v_primitives.back()->prim_shininess = shininess;
+				}
 				else if (cmd == "sphere")
 				{
 					validinput = readvals(s, 4, values);
-
 					v_primitives.push_back(new sphere(glm::vec3(values[0], values[1], values[2]), // center
  													values[3]) // radius
 													);
+					// assign material properties
+					v_primitives.back()->prim_diffuse = diffuse;
+					v_primitives.back()->prim_specular = specular;
+					v_primitives.back()->prim_emission = emission;
+					v_primitives.back()->prim_shininess = shininess;
 				}
 
 				// I include the basic push/pop code for matrix stacks

@@ -63,3 +63,24 @@ float sphere::get_radius()
 	return radius;
 }
 
+
+triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
+{
+	v0 = v0_con;
+	v1 = v1_con;
+	v2 = v2_con;
+
+	tri_normal = glm::normalize(glm::cross((v1 - v0), (v2 - v0))); // unit norm
+}
+
+/*
+bool triangle::intersect(const ray ray_shot, float &out_t)
+{
+	// check if ray intersects plane (find t)
+
+
+	// check if t<0, if so, return false (intersection not in view)
+
+	// t >=0, find if ray is inside triangle by solving barycentric equation
+}
+*/

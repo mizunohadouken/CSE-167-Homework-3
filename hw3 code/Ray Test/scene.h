@@ -11,21 +11,30 @@
 #include "camera.h"
 // #include "print_helpers.h"
 
-
-
-// TODO parse file 
 class scene
 {
 public:
 	// variables to parse
-	float width;
-	float height;
-	glm::vec3 LookFrom;
-	glm::vec3 LookAt;
-	glm::vec3 UpVec;
+
+	// scene defaults
+	float width, height;
+	int max_verts;
+
+	// camera variables
+	glm::vec3 LookFrom, LookAt, UpVec;
 	float fovy;
+
+	// light variables
+	glm::vec3 ambient;
+
+	// temp material variables
+	glm::vec3 diffuse, specular, emission;
+	float shininess;
+
+
+	// geometry/primitives
 	std::vector<primitive*> v_primitives;
-	// TODO,  add lighting variables
+	std::vector<glm::vec3> v_vertices;
 
 	// methods
 	void readfile(const char* filename);
