@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 	std::cout << "Number of trianlges: " << scene.v_primitives.size() << "\n";
 	printvec3(primitives.back()->prim_diffuse);
 	printvec3(scene.ambient);
-
+	std::cout << "K-eps: " << k_eps << "\n";
 	// !!!!!!!!!!!!!
 	// !!!!!!!!!!!!!
 

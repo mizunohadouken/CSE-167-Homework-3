@@ -73,14 +73,37 @@ triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
 	tri_normal = glm::normalize(glm::cross((v1 - v0), (v2 - v0))); // unit norm
 }
 
-/*
+
 bool triangle::intersect(const ray ray_shot, float &out_t)
 {
-	// check if ray intersects plane (find t)
+	// find denomiator of t
+	float t_denominator = glm::dot(ray_shot.ray_dir, tri_normal);
 
+	if (fabs(t_denominator) < k_eps) return false; // if denominator of t is near zero, undefined so plane and ray are parallel
+		
+	float t_temp =  (glm::dot(v0, tri_normal) - glm::dot(ray_shot.ray_origin, tri_normal))/t_denominator;
+	if (t_temp < 0) return false; // intesection is behind ray
 
-	// check if t<0, if so, return false (intersection not in view)
+	glm::vec3 Point_Hit = ray_shot.ray_origin + t_temp*ray_shot.ray_dir; // compute point hit on plane by ray
 
-	// t >=0, find if ray is inside triangle by solving barycentric equation
+	// ray intersects plane defined by vertices
+	// now check if intersection is inside triangle using barycentric coordinates
+	glm::vec3 a = Point_Hit - v0,
+			  b = v1 - v0,
+			  c = v2 - v0;
+
+	// compute barycentric coordinates
+	float beta_gamma_denominator = b.x*c.y - b.y*c.x,
+		  beta = (a.x*c.y - a.y*c.x) / beta_gamma_denominator,
+		  gamma = (a.y*b.x - a.x*b.y) / beta_gamma_denominator,
+		  alpha = 1 - beta - gamma;
+
+	// check if alpha, beta, and gamma are between 0 and 1 inclusive
+	if ((alpha < k_eps) || (beta < k_eps) || (gamma < k_eps)
+	 || (alpha > 1) || (beta > 1) || (gamma > 1)) return false;
+
+	// if this point reached, hit point is within triangle and returns true
+	out_t = t_temp;
+	return true;
 }
-*/
+

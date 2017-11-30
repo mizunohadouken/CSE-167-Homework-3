@@ -4,6 +4,7 @@
 #include "camera.h"
 #include <algorithm>
 
+const float k_eps = 1e-8; // TODO check this value, might change to 0
 
 class primitive
 {
@@ -37,7 +38,7 @@ class triangle : public primitive
 {
 public:
 	triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con);
-//	bool intersect(const ray ray_shot, float &out_t);
+	bool intersect(const ray ray_shot, float &out_t);
 
 	glm::vec3 v0, v1, v2, tri_normal;
 private:

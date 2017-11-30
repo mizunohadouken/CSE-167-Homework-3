@@ -39,7 +39,7 @@ glm::vec3 raytracer::compute_pixel_color(const ray & rayshot, std::vector<primit
 		// TODO complete algorithm to determine pixel color
 		hit_color[0] = 255;
 		hit_color[1] = 255;
-		hit_color[2] = 255;
+		hit_color[2] = 1;
 // TODO remove		std::cout << "it's true yo\n";
 	}
 
