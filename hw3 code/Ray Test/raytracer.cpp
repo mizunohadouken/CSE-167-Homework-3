@@ -11,7 +11,6 @@ raytracer::~raytracer()
 bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitive*> scene_primitives, float & out_tNear, const primitive *& out_primitive_hit)
 {
 	out_tNear = INFINITY;
-
 	
 	// iterate through all scene primitives
 	std::vector<primitive*>::iterator iterator = scene_primitives.begin();

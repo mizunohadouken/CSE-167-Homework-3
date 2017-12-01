@@ -91,12 +91,9 @@ int main(int argc, char *argv[])
 			//!!!!!!!!!!!!!!End testing ground
 
 			int slot = 3 * ((Height-i - 1)*Width + j);
-//			*(pixel_array + 0 + slot) = color_vec[0];
-//			*(pixel_array + 1 + slot) = color_vec[1];
-//			*(pixel_array + 2 + slot) = color_vec[2];
-			pixel_array[slot + 0] = color_vec[0];
-			pixel_array[slot + 1] = color_vec[1];
-			pixel_array[slot + 2] = color_vec[2];
+			*(pixel_array + 0 + slot) = color_vec[0];
+			*(pixel_array + 1 + slot) = color_vec[1];
+			*(pixel_array + 2 + slot) = color_vec[2];
 		}
 	}
 

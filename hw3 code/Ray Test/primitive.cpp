@@ -94,6 +94,6 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 	float gamma = (glm::dot(temp_vec_Q, ray_shot.ray_dir)) * det_inverse;
 	if (gamma < 0 || beta + gamma > 1) return false;
 
-	out_t = glm::dot(temp_vec_Q, v0v2);
+	out_t = (glm::dot(temp_vec_Q, v0v2)) * det_inverse;
 	return true;
 }
