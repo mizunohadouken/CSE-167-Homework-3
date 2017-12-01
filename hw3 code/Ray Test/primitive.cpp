@@ -82,7 +82,7 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 	glm::vec3 temp_vec_p = glm::cross(ray_shot.ray_dir, v0v2);
 	float determinant = glm::dot(temp_vec_p, v0v1);
 
-	if (determinant < k_eps) return false; // ray is parallel or tri is backfacing
+//	if (determinant < k_eps) return false; //  TODO comment out to disable culling, ray is parallel or tri is backfacing
 	if (fabs(determinant) < k_eps) return false; // ray is near 0, so parallel
 
 	float det_inverse = 1 / determinant;
@@ -97,72 +97,3 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 	out_t = glm::dot(temp_vec_Q, v0v2);
 	return true;
 }
-
-/*
-bool triangle::intersect(const ray ray_shot, float &out_t)
-{
-
-	// find denomiator of t
-	float t_denominator = glm::dot(ray_shot.ray_dir, tri_normal);
-
-	// if denominator of t is near zero, undefined so plane and ray are parallel
-	if (fabs(t_denominator) < k_eps){return false;}
-	
-	float t_temp =  (glm::dot(v0, tri_normal) - glm::dot(ray_shot.ray_origin, tri_normal))/t_denominator;
-		
-
-	if (t_temp < 0){return false;}	// intesection is behind ray
-	glm::vec3 Point_Hit = ray_shot.ray_origin + t_temp*ray_shot.ray_dir; // compute point hit on plane by ray
-
-	*/
-
-																		 /*
-	glm::vec3 tmp_nb = glm::cross(v2 - Point_Hit, v0 - Point_Hit);
-	glm::vec3 tmp_nc = glm::cross(v0 - Point_Hit, v1 - Point_Hit);
-
-	float beta = glm::dot(tri_normal, tmp_nb) / glm::dot(tri_normal, tri_normal);
-	float gamma = glm::dot(tri_normal, tmp_nc) / glm::dot(tri_normal, tri_normal);
-	float alpha = 1.0 - beta - gamma;
-
-	if (beta > -k_eps && beta < 1.0 + k_eps&& gamma > -k_eps && gamma < 1.0 + k_eps
-		&& alpha > -k_eps && alpha < 1.0 + k_eps) {
-		out_t = t_temp;
-		return true;
-	}
-	else
-		return false;
-	*/
-
-
-	/*
-	// ray intersects plane defined by vertices
-	// now check if intersection is inside triangle using barycentric coordinates
-	glm::vec3 a = Point_Hit - v0,
-			  b = v1 - v0,
-			  c = v2 - v0;
-	
-	// compute barycentric coordinates
-	float beta_gamma_denominator = b.x*c.y - b.y*c.x;
-	if (beta_gamma_denominator == 0){return false;}
-//	printf("made it"); // TODO remove
-
-	float beta = (a.x*c.y - a.y*c.x) / beta_gamma_denominator,
-	      gamma = (a.y*b.x - a.x*b.y) / beta_gamma_denominator,
-		  alpha = 1 - beta - gamma;
-
-	// check if alpha, beta, and gamma are between 0 and 1 inclusive
-//	if ((alpha < k_eps) || (beta < k_eps) || (gamma < k_eps) || (alpha > 1) || (beta > 1) || (gamma > 1)) return false;
-	if (beta >= k_eps && beta <= 1 
-		&& gamma >= k_eps && gamma <= 1 
-		&& alpha >= k_eps && alpha <= 1)
-	{
-		// if this point reached, hit point is within triangle and returns true
-		out_t = t_temp;
-		return true;
-	}
-		
-	else false;
-
-	}*/
-
-

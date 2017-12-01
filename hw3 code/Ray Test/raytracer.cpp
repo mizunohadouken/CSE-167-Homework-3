@@ -20,7 +20,6 @@ bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitiv
 		float out_temp_t = INFINITY;
 		if ((*iterator)->intersect(rayshot, out_temp_t) && out_temp_t < out_tNear)
 		{
-			printf("made it");
 			out_primitive_hit = *iterator;
 			out_tNear = out_temp_t;
 		}
@@ -39,12 +38,9 @@ glm::vec3 raytracer::compute_pixel_color(const ray & rayshot, std::vector<primit
 	if (trace_ray_to_primitive(rayshot, scene_primitives, out_t, out_primitive_hit))
 	{
 		// TODO complete algorithm to determine pixel color
-		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.x))); // clamp between 0 and 1
-		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.y)));
-		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.z)));
-//		hit_color[0] = 255;
-//		hit_color[1] = 255;
-//		hit_color[2] = 255;
+		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.b))); // clamp between 0 and 1
+		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.g)));
+		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.r)));
 	}
 
 	return hit_color;

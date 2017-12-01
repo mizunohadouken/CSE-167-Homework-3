@@ -37,27 +37,27 @@ vertex -1 +1 +1
 # No lighting calculations should be performed since I haven't defined any 
 # lights.
 
-#ambient .5 0 .5 
-# face -Y
-#tri 0 1 5 
-#tri 0 5 4 
-#ambient .5 1 .5 
-# face +Y
-#tri 3 7 6
-#tri 3 6 2
-#ambient 1 .5 .5 
-# face +X
-#tri 1 2 6
-#tri 1 6 5 
-#ambient 0 .5 .5 
-# face -X
-#tri 0 7 3 
-#tri 0 4 7 
-ambient .5 .5 0
-# face -Z
-tri 0 3 2 
-tri 0 2 1
-ambient .5 .5 1
-# face +Z
-tri 4 5 6 
-tri 4 6 7 
+ambient .5 0 .5 
+# face -Y is purple
+tri 0 1 5 
+tri 0 5 4 
+ambient .5 1 .5 
+# face +Y is lime green
+tri 3 7 6
+tri 3 6 2
+ambient 1 .5 .5 
+# face +X is pink (inccorect lavender)
+tri 1 2 6
+tri 1 6 5 
+ambient 0 .5 .5 
+# face -X is teal (incorrect lime green)
+tri 0 7 3 
+tri 0 4 7 
+#ambient .5 .5 0
+# face -Z is teal
+#tri 0 3 2 
+#tri 0 2 1
+#ambient .5 .5 1
+# face +Z is pink
+#tri 4 5 6 
+#tri 4 6 7 
