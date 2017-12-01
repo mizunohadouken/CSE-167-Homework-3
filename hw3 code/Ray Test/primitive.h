@@ -5,6 +5,8 @@
 #include <algorithm>
 
 const float k_eps = 1e-8; // TODO check this value, might change to 0
+//const float k_eps = 0;
+
 
 class primitive
 {
@@ -14,8 +16,9 @@ public:
 	virtual bool intersect(const ray ray_shot, float &out_t);
 
 	// material properties
-	glm::vec3 prim_diffuse, prim_specular, prim_emission;
+	glm::vec3 prim_diffuse, prim_specular, prim_emission, prim_ambient;  // TODO need this initialized? = glm::vec3(.2f, .2f, .2f);
 	float prim_shininess;
+	
 
 private:
 };

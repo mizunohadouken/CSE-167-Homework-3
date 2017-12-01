@@ -66,9 +66,12 @@ int main(int argc, char *argv[])
 	std::cout << "Max Verts: " << scene.max_verts << "\n";
 	std::cout << "Number of vertices: " << scene.v_vertices.size() << "\n";
 	std::cout << "Number of trianlges: " << scene.v_primitives.size() << "\n";
-	printvec3(primitives.back()->prim_diffuse);
+	std::cout << "Number of primitives: " << primitives.size() << "\n";
+
+	printf("last ambient:\n");
 	printvec3(scene.ambient);
 	std::cout << "K-eps: " << k_eps << "\n";
+	
 	// !!!!!!!!!!!!!
 	// !!!!!!!!!!!!!
 
@@ -92,7 +95,6 @@ int main(int argc, char *argv[])
 			*(pixel_array + 0 + slot) = color_vec[0];
 			*(pixel_array + 1 + slot) = color_vec[1];
 			*(pixel_array + 2 + slot) = color_vec[2];
-
 		}
 	}
 

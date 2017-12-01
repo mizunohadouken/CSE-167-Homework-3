@@ -12,6 +12,7 @@ bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitiv
 {
 	out_tNear = INFINITY;
 
+	
 	// iterate through all scene primitives
 	std::vector<primitive*>::iterator iterator = scene_primitives.begin();
 	for (; iterator != scene_primitives.end(); ++iterator)
@@ -19,6 +20,7 @@ bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitiv
 		float out_temp_t = INFINITY;
 		if ((*iterator)->intersect(rayshot, out_temp_t) && out_temp_t < out_tNear)
 		{
+			printf("made it");
 			out_primitive_hit = *iterator;
 			out_tNear = out_temp_t;
 		}
@@ -31,18 +33,19 @@ bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitiv
 glm::vec3 raytracer::compute_pixel_color(const ray & rayshot, std::vector<primitive*> scene_primitives)
 {
 	glm::vec3 hit_color = glm::vec3(0);
-	const primitive *primitive_hit = nullptr;
-	float t; // hit scalar in ray equation;
+	const primitive *out_primitive_hit = nullptr;
+	float out_t; // hit scalar in ray equation;
 
-	if (trace_ray_to_primitive(rayshot, scene_primitives, t, primitive_hit))
+	if (trace_ray_to_primitive(rayshot, scene_primitives, out_t, out_primitive_hit))
 	{
 		// TODO complete algorithm to determine pixel color
-		hit_color[0] = 255;
-		hit_color[1] = 255;
-		hit_color[2] = 1;
-// TODO remove		std::cout << "it's true yo\n";
+		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.x))); // clamp between 0 and 1
+		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.y)));
+		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.z)));
+//		hit_color[0] = 255;
+//		hit_color[1] = 255;
+//		hit_color[2] = 255;
 	}
-
 
 	return hit_color;
 }

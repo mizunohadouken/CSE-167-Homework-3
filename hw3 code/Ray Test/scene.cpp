@@ -62,11 +62,7 @@ void scene::readfile(const char * filename)
 				}
 
 				// lights
-				else if (cmd == "ambient")
-				{
-					validinput = readvals(s, 3, values);
-					ambient = glm::vec3(values[0], values[1], values[2]);
-				}
+
 
 				// material properties
 				else if (cmd == "diffuse")
@@ -88,6 +84,11 @@ void scene::readfile(const char * filename)
 				{
 					validinput = readvals(s, 1, values);
 					shininess = values[0];
+				}
+				else if (cmd == "ambient")
+				{
+					validinput = readvals(s, 3, values);
+					ambient = glm::vec3(values[0], values[1], values[2]);
 				}
 
 				//geometry
@@ -112,6 +113,7 @@ void scene::readfile(const char * filename)
 					v_primitives.back()->prim_specular = specular;
 					v_primitives.back()->prim_emission = emission;
 					v_primitives.back()->prim_shininess = shininess;
+					v_primitives.back()->prim_ambient = ambient;
 				}
 				else if (cmd == "sphere")
 				{
@@ -124,6 +126,8 @@ void scene::readfile(const char * filename)
 					v_primitives.back()->prim_specular = specular;
 					v_primitives.back()->prim_emission = emission;
 					v_primitives.back()->prim_shininess = shininess;
+					v_primitives.back()->prim_ambient = ambient;
+
 				}
 
 				// I include the basic push/pop code for matrix stacks

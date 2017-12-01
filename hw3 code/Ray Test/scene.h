@@ -25,10 +25,10 @@ public:
 	float fovy;
 
 	// light variables
-	glm::vec3 ambient;
+//	glm::vec3 ;
 
 	// temp material variables
-	glm::vec3 diffuse, specular, emission;
+	glm::vec3 diffuse, specular, emission, ambient;
 	float shininess;
 
 
