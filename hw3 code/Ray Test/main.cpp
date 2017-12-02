@@ -92,11 +92,11 @@ int main(int argc, char *argv[])
 	printf("last ambient:\n");
 	printvec3(scene.ambient);
 
-	printf("Transform Matrix:\n");
-	print4x4Matrix(primitives.back()->m_transform_stack);
+//	printf("Transform Matrix:\n");
+//	print4x4Matrix(primitives.back()->m_transform_stack);
 
-	printf("Inv Transform Matrix:\n");
-	print4x4Matrix(primitives.back()->m_transform_stack_inv);
+//	printf("Inv Transform Matrix:\n");
+//	print4x4Matrix(primitives.back()->m_transform_stack_inv);
 	
 	// !!!!!!!!!!!!!
 	// !!!!!!!!!!!!!
@@ -129,9 +129,10 @@ int main(int argc, char *argv[])
 	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixel_array, Width, Height, Width * 3, 24, 0xFF0000, 0xFF0000, 0xFF0000, false);
 	FreeImage_Save(FIF_PNG, img, "filename.png", 0);
 	
-	// Display Text
-	std::cout << "Free Image_" << FreeImage_GetVersion() << "\n";
-	std::cout << FreeImage_GetCopyrightMessage() << "\n\n";
+	// End Program Display Text
+	std::cout << "\n********************" << "\n";
+	std::cout << "Ray Tracing Complete" << "\n";
+	std::cout << "\n********************" << "\n";
 	FreeImage_DeInitialise();
 	system("Pause");
 }

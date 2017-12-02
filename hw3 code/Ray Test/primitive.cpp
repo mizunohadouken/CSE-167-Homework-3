@@ -19,16 +19,31 @@ ray primitive::inv_transform_ray(const ray & ray_to_inv)
 	glm::vec4 ray_org_hom = glm::vec4(ray_to_inv.ray_origin, 1.0f);
 	glm::vec4 ray_dir_hom = glm::vec4(ray_to_inv.ray_dir, 0.0f);
 
-	glm::vec4 inv_ray_org = m_transform_stack_inv * ray_dir_hom;
-	glm::vec4 inv_ray_dir = m_transform_stack_inv * ray_org_hom;
+	glm::vec4 inv_ray_org = m_transform_stack_inv * ray_org_hom;
+	glm::vec4 inv_ray_dir = m_transform_stack_inv * ray_dir_hom;
 
 	// demogonize origin and input origin and direction into new ray
-	ray inv_ray(glm::vec3(inv_ray_org.x/ inv_ray_org.w, inv_ray_org.y / inv_ray_org.w, inv_ray_org.z / inv_ray_org.w),
+	float inv_w = 1 / inv_ray_org.w;
+	ray inv_ray(glm::vec3(inv_ray_org.x * inv_w, inv_ray_org.y * inv_w, inv_ray_org.z * inv_w),
 				glm::vec3(inv_ray_dir.x, inv_ray_dir.y, inv_ray_dir.z));
 
 	return inv_ray;
 }
 
+float primitive::revert_t(ray& trans_ray, float& inv_t, glm::vec3 ray_origin)
+{
+	glm::vec3 inv_ray_int = trans_ray.ray_origin + trans_ray.ray_dir*inv_t;
+	glm::vec4 hom_inv_ray_int = glm::vec4(inv_ray_int, 1.0f);
+	glm::vec4 hom_ray_int_transform = (m_transform_stack) * hom_inv_ray_int;
+
+	float inv_ray_int_w = 1 / hom_ray_int_transform.w;
+	glm::vec3 dehom_ray_int = glm::vec3(hom_ray_int_transform.x * inv_ray_int_w,
+										hom_ray_int_transform.y * inv_ray_int_w,
+										hom_ray_int_transform.z * inv_ray_int_w);
+
+	float t = glm::length(dehom_ray_int - ray_origin);
+	return t;
+}
 
 
 sphere::sphere(const glm::vec3 &center_con, const float &radius_con)

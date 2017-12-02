@@ -1,4 +1,4 @@
- # Test Scene 1 
+# Test Scene 1 
 # A simple quad viewed from different camera positions
 
 size 640 480 
@@ -15,7 +15,7 @@ camera 0 -3 3 0 0 0 0 1 0 30
 # for initial testing, you should get the geometry right
 # you may want to use dummy (constant) shading, ignoring these lines
 
-ambient .5 .5 1
+ambient .1 .1 .1
 directional 0 0 1 .5 .5 .5 
 point 4 0 4 .5 .5 .5
 diffuse 1 0 0 
@@ -33,10 +33,6 @@ vertex -1 -1 0
 vertex +1 -1 0
 vertex +1 +1 0
 vertex -1 +1 0
-
-translate  0 0 0.5
-rotate 0 0 1 45
-scale 1.0 0.25 0.25 
 
 tri 0 1 2
 tri 0 2 3

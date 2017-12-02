@@ -17,7 +17,8 @@ public:
 	// methods
 	virtual bool intersect(const ray ray_shot, float &out_t);
 	ray inv_transform_ray(const ray& ray_to_inv);
- 
+	float revert_t(ray& trans_ray, float& inv_t, glm::vec3 ray_origin);
+
 	// material properties
 	glm::vec3 prim_diffuse, prim_specular, prim_emission, prim_ambient;  // TODO need this initialized? = glm::vec3(.2f, .2f, .2f);
 	float prim_shininess;

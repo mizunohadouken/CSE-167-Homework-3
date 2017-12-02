@@ -20,22 +20,14 @@ bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitiv
 		float out_temp_t = INFINITY;
 				
 		ray inv_ray = (*iterator)->inv_transform_ray(rayshot);
-		if ((*iterator)->intersect(rayshot, out_temp_t))
+		if ((*iterator)->intersect(inv_ray, out_temp_t))
 		{
-			if (out_temp_t < out_tNear)
+			float reverted_t = (*iterator)->revert_t(inv_ray, out_temp_t, rayshot.ray_origin);
+			if (reverted_t < out_tNear)
 			{
 				out_primitive_hit = *iterator;
-				out_tNear = out_temp_t;
+				out_tNear = reverted_t;
 			}
-			/*
-			glm::vec3 inv_ray_int = inv_ray.ray_origin + inv_ray.ray_dir*out_temp_t;
-			glm::vec4 hom_inv_ray_int = glm::vec4(inv_ray_int, 1.0f);
-			glm::vec4 hom_ray_int_transform = ((*iterator)->m_transform_stack) * hom_inv_ray_int;
-			glm::vec3 dehom_ray_int = glm::vec3(hom_ray_int_transform.x / hom_ray_int_transform.w,
-												hom_ray_int_transform.y / hom_ray_int_transform.w,
-												hom_ray_int_transform.z / hom_ray_int_transform.w);
-			float t_out = glm::length(dehom_ray_int - rayshot.ray_origin);
-			*/
 		}
 	}
 	
