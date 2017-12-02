@@ -9,7 +9,21 @@
 #include <memory>
 #include "primitive.h"
 #include "camera.h"
-// #include "print_helpers.h"
+
+class light
+{
+public:
+	light();
+	~light();
+
+	light(glm::vec3 dir_pos_con, glm::vec3 color_con, bool attenutation_con);
+
+	glm::vec3 dir_pos;
+	glm::vec3 color;
+	bool use_attenuation;
+private:
+
+};
 
 class scene
 {
@@ -25,7 +39,8 @@ public:
 	float fovy;
 
 	// light variables
-//	glm::vec3 ;
+	glm::vec3 attenuation;
+	std::vector<light*> v_scene_lights;
 
 	// temp material variables
 	glm::vec3 diffuse, specular, emission, ambient;

@@ -88,16 +88,20 @@ int main(int argc, char *argv[])
 	std::cout << "Number of vertices: " << scene.v_vertices.size() << "\n";
 	std::cout << "Number of primitives: " << primitives.size() << "\n";
 	std::cout << "K-eps: " << k_eps << "\n";
-
-	printf("last ambient:\n");
-	printvec3(scene.ambient);
-
-//	printf("Transform Matrix:\n");
-//	print4x4Matrix(primitives.back()->m_transform_stack);
-
-//	printf("Inv Transform Matrix:\n");
-//	print4x4Matrix(primitives.back()->m_transform_stack_inv);
 	
+	std::vector<light*> scene_lights = scene.v_scene_lights;
+	std::cout << "Number of lights " << scene_lights.size() << "\n";
+	printf("Light Dir Vec\n");
+	printvec3(scene_lights.back()->dir_pos);
+	printf("Light Color Vec\n");
+	printvec3(scene_lights.back()->color);
+	std::cout << "Use attenuation? = " << scene_lights.back()->use_attenuation << "\n";
+	printf("Attenuation\n");
+	printvec3(scene.attenuation);
+
+	std::cout << "Primitive ambient\n";
+	printvec3(primitives.back()->prim_ambient);
+
 	// !!!!!!!!!!!!!
 	// !!!!!!!!!!!!!
 

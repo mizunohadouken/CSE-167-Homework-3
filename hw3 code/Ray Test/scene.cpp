@@ -1,5 +1,20 @@
 #include "scene.h"
 
+light::light()
+{
+}
+
+light::~light()
+{
+}
+
+light::light(glm::vec3 dir_pos_con, glm::vec3 color_con, bool attenutation_con)
+{
+	dir_pos = dir_pos_con;
+	color = color_con;
+	use_attenuation = attenutation_con;
+}
+
 void scene::readfile(const char * filename)
 {
 
@@ -62,7 +77,36 @@ void scene::readfile(const char * filename)
 				}
 
 				// lights
-
+				else if (cmd == "directional")
+				{
+					validinput = readvals(s, 6, values);
+					if (validinput)
+					{
+						light* temp_light = new light(glm::vec3(values[0], values[1], values[2]), // direction
+													  glm::vec3(values[3], values[4], values[5]), // color
+													  false);									  // false, directional lights do not use attenuation
+						v_scene_lights.push_back(temp_light);
+					}
+				}
+				else if (cmd == "point")
+				{
+					validinput = readvals(s, 6, values);
+					if (validinput)
+					{
+						light* temp_light = new light(glm::vec3(values[0], values[1], values[2]), // direction
+											    	  glm::vec3(values[3], values[4], values[5]), // color
+												  	  true);									  // true, point lights do use attenuation
+						v_scene_lights.push_back(temp_light);
+					}
+				}
+				else if (cmd == "attenuation")
+				{
+					validinput = readvals(s, 3, values);
+					if (validinput)
+					{
+						attenuation = glm::vec3(values[0], values[1], values[2]);
+					}
+				}
 
 				// material properties
 				else if (cmd == "diffuse")
@@ -140,7 +184,7 @@ void scene::readfile(const char * filename)
 
 				}
 
-				// TODO verify correct, material transforms
+				// transforms
 				else if (cmd == "translate")
 				{
 					validinput = readvals(s, 3, values);
@@ -172,8 +216,6 @@ void scene::readfile(const char * filename)
 					}
 				}
 
-
-				// I include the basic push/pop code for matrix stacks
 				else if (cmd == "pushTransform")
 				{
 					transform_stack.push(transform_stack.top());
@@ -236,6 +278,7 @@ void scene::matransform(std::stack<glm::mat4>& transfstack, float * values)
 
 scene::scene()
 {
+	attenuation = glm::vec3(1.0f, 0.f, 0.f); // TODO check default attenuation (0.f, 0.f, 1.f) for point light?
 }
 
 scene::~scene()

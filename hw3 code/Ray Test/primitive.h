@@ -20,7 +20,7 @@ public:
 	float revert_t(ray& trans_ray, float& inv_t, glm::vec3 ray_origin);
 
 	// material properties
-	glm::vec3 prim_diffuse, prim_specular, prim_emission, prim_ambient;  // TODO need this initialized? = glm::vec3(.2f, .2f, .2f);
+	glm::vec3 prim_diffuse, prim_specular, prim_emission, prim_ambient;
 	float prim_shininess;
 	glm::mat4 m_transform_stack = glm::mat4(1.0f);
 	glm::mat4 m_transform_stack_inv = glm::mat4(1.0f);

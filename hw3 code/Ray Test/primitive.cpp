@@ -2,6 +2,7 @@
 
 primitive::primitive()
 {
+	prim_ambient = glm::vec3(.2f, .2f, .2f);  // TODO need this initialized? = glm::vec3(.2f, .2f, .2f);
 }
 
 primitive::~primitive()
@@ -15,7 +16,6 @@ bool primitive::intersect(const ray ray_shot, float & out_t)
 
 ray primitive::inv_transform_ray(const ray & ray_to_inv)
 {
-	// TODO verify matrix vector multiplication is corect
 	glm::vec4 ray_org_hom = glm::vec4(ray_to_inv.ray_origin, 1.0f);
 	glm::vec4 ray_dir_hom = glm::vec4(ray_to_inv.ray_dir, 0.0f);
 
@@ -51,6 +51,7 @@ sphere::sphere(const glm::vec3 &center_con, const float &radius_con)
 	center = center_con;
 	radius = radius_con;
 	radius_sq = radius*radius;
+	prim_ambient = glm::vec3(.2f, .2f, .2f); // TODO default ambient
 }
 
 bool sphere::intersect(const ray ray_shot, float & out_t)
@@ -104,6 +105,8 @@ triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
 
 	tri_normal = glm::cross((v1 - v0), (v2 - v0));
 //	tri_normal = glm::normalize(glm::cross((v1 - v0), (v2 - v0))); // TODO check if unit norm needed
+
+	prim_ambient = glm::vec3(.2f, .2f, .2f); // TODO default ambient
 }
 
 
