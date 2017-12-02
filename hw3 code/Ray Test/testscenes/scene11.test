@@ -34,6 +34,10 @@ vertex +1 -1 0
 vertex +1 +1 0
 vertex -1 +1 0
 
+translate  0 0 0.5
+rotate 0 0 1 45
+scale 1.0 0.25 0.25 
+
 tri 0 1 2
 tri 0 2 3
 

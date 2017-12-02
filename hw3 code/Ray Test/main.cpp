@@ -15,6 +15,27 @@
 // TODO remove
 // !!!!!!!!!!!!!
 
+void print4x4Matrix(glm::mat4 mPrintMe)
+{
+	std::cout << mPrintMe[0][0] << " ";
+	std::cout << mPrintMe[1][0] << " ";
+	std::cout << mPrintMe[2][0] << " ";
+	std::cout << mPrintMe[3][0] << "\n";
+	std::cout << mPrintMe[0][1] << " ";
+	std::cout << mPrintMe[1][1] << " ";
+	std::cout << mPrintMe[2][1] << " ";
+	std::cout << mPrintMe[3][1] << "\n";
+	std::cout << mPrintMe[0][2] << " ";
+	std::cout << mPrintMe[1][2] << " ";
+	std::cout << mPrintMe[2][2] << " ";
+	std::cout << mPrintMe[3][2] << "\n";
+	std::cout << mPrintMe[0][3] << " ";
+	std::cout << mPrintMe[1][3] << " ";
+	std::cout << mPrintMe[2][3] << " ";
+	std::cout << mPrintMe[3][3] << "\n";
+	return;
+}
+
 void test_line(std::string section_string)
 {
 	std::cout << "made it to: " << section_string << "\n";
@@ -66,10 +87,16 @@ int main(int argc, char *argv[])
 	std::cout << "Max Verts: " << scene.max_verts << "\n";
 	std::cout << "Number of vertices: " << scene.v_vertices.size() << "\n";
 	std::cout << "Number of primitives: " << primitives.size() << "\n";
+	std::cout << "K-eps: " << k_eps << "\n";
 
 	printf("last ambient:\n");
 	printvec3(scene.ambient);
-	std::cout << "K-eps: " << k_eps << "\n";
+
+	printf("Transform Matrix:\n");
+	print4x4Matrix(primitives.back()->m_transform_stack);
+
+	printf("Inv Transform Matrix:\n");
+	print4x4Matrix(primitives.back()->m_transform_stack_inv);
 	
 	// !!!!!!!!!!!!!
 	// !!!!!!!!!!!!!
@@ -95,6 +122,8 @@ int main(int argc, char *argv[])
 			*(pixel_array + 1 + slot) = color_vec[1];
 			*(pixel_array + 2 + slot) = color_vec[2];
 		}
+		int counter = i % 50;
+		if (counter == 0) std::cout << "Tracing pixel row: " << i << "\n";
 	}
 
 	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixel_array, Width, Height, Width * 3, 24, 0xFF0000, 0xFF0000, 0xFF0000, false);

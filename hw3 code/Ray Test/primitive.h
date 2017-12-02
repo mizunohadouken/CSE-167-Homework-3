@@ -13,12 +13,16 @@ class primitive
 public:
 	primitive();
 	virtual ~primitive();
-	virtual bool intersect(const ray ray_shot, float &out_t);
 
+	// methods
+	virtual bool intersect(const ray ray_shot, float &out_t);
+	ray inv_transform_ray(const ray& ray_to_inv);
+ 
 	// material properties
 	glm::vec3 prim_diffuse, prim_specular, prim_emission, prim_ambient;  // TODO need this initialized? = glm::vec3(.2f, .2f, .2f);
 	float prim_shininess;
-	
+	glm::mat4 m_transform_stack = glm::mat4(1.0f);
+	glm::mat4 m_transform_stack_inv = glm::mat4(1.0f);
 
 private:
 };

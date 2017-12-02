@@ -11,16 +11,31 @@ raytracer::~raytracer()
 bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitive*> scene_primitives, float & out_tNear, const primitive *& out_primitive_hit)
 {
 	out_tNear = INFINITY;
-	
+
 	// iterate through all scene primitives
 	std::vector<primitive*>::iterator iterator = scene_primitives.begin();
+
 	for (; iterator != scene_primitives.end(); ++iterator)
 	{
 		float out_temp_t = INFINITY;
-		if ((*iterator)->intersect(rayshot, out_temp_t) && out_temp_t < out_tNear)
+				
+		ray inv_ray = (*iterator)->inv_transform_ray(rayshot);
+		if ((*iterator)->intersect(rayshot, out_temp_t))
 		{
-			out_primitive_hit = *iterator;
-			out_tNear = out_temp_t;
+			if (out_temp_t < out_tNear)
+			{
+				out_primitive_hit = *iterator;
+				out_tNear = out_temp_t;
+			}
+			/*
+			glm::vec3 inv_ray_int = inv_ray.ray_origin + inv_ray.ray_dir*out_temp_t;
+			glm::vec4 hom_inv_ray_int = glm::vec4(inv_ray_int, 1.0f);
+			glm::vec4 hom_ray_int_transform = ((*iterator)->m_transform_stack) * hom_inv_ray_int;
+			glm::vec3 dehom_ray_int = glm::vec3(hom_ray_int_transform.x / hom_ray_int_transform.w,
+												hom_ray_int_transform.y / hom_ray_int_transform.w,
+												hom_ray_int_transform.z / hom_ray_int_transform.w);
+			float t_out = glm::length(dehom_ray_int - rayshot.ray_origin);
+			*/
 		}
 	}
 	

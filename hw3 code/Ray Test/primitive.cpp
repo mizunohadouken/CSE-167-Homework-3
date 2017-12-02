@@ -13,6 +13,24 @@ bool primitive::intersect(const ray ray_shot, float & out_t)
 	return false;
 }
 
+ray primitive::inv_transform_ray(const ray & ray_to_inv)
+{
+	// TODO verify matrix vector multiplication is corect
+	glm::vec4 ray_org_hom = glm::vec4(ray_to_inv.ray_origin, 1.0f);
+	glm::vec4 ray_dir_hom = glm::vec4(ray_to_inv.ray_dir, 0.0f);
+
+	glm::vec4 inv_ray_org = m_transform_stack_inv * ray_dir_hom;
+	glm::vec4 inv_ray_dir = m_transform_stack_inv * ray_org_hom;
+
+	// demogonize origin and input origin and direction into new ray
+	ray inv_ray(glm::vec3(inv_ray_org.x/ inv_ray_org.w, inv_ray_org.y / inv_ray_org.w, inv_ray_org.z / inv_ray_org.w),
+				glm::vec3(inv_ray_dir.x, inv_ray_dir.y, inv_ray_dir.z));
+
+	return inv_ray;
+}
+
+
+
 sphere::sphere(const glm::vec3 &center_con, const float &radius_con)
 {
 	center = center_con;

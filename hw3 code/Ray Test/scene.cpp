@@ -68,67 +68,110 @@ void scene::readfile(const char * filename)
 				else if (cmd == "diffuse")
 				{
 					validinput = readvals(s, 3, values);
-					diffuse = glm::vec3(values[0], values[1], values[2]);
+					if (validinput) diffuse = glm::vec3(values[0], values[1], values[2]);
 				}
 				else if (cmd == "specular")
 				{
 					validinput = readvals(s, 3, values);
-					specular = glm::vec3(values[0], values[1], values[2]);
+					if(validinput) specular = glm::vec3(values[0], values[1], values[2]);
 				}
 				else if (cmd == "emission")
 				{
 					validinput = readvals(s, 3, values);
-					emission = glm::vec3(values[0], values[1], values[2]);
+					if(validinput) emission = glm::vec3(values[0], values[1], values[2]);
 				}
 				else if (cmd == "shininess")
 				{
 					validinput = readvals(s, 1, values);
-					shininess = values[0];
+					if(validinput) shininess = values[0];
 				}
 				else if (cmd == "ambient")
 				{
 					validinput = readvals(s, 3, values);
-					ambient = glm::vec3(values[0], values[1], values[2]);
+					if(validinput) ambient = glm::vec3(values[0], values[1], values[2]);
 				}
 
 				//geometry
 				else if (cmd == "maxverts")
 				{
 					validinput = readvals(s, 1, values);
-					max_verts = values[0];
+					if(validinput) max_verts = values[0];
 				}
 				else if (cmd == "vertex")
 				{
 					validinput = readvals(s, 3, values);
-					v_vertices.push_back(glm::vec3(values[0], values[1], values[2]));
+					if (validinput) v_vertices.push_back(glm::vec3(values[0], values[1], values[2]));
 				}
 				else if (cmd == "tri")
 				{
 					validinput = readvals(s, 3, values);
-					v_primitives.push_back(new triangle(v_vertices[values[0]],
-														v_vertices[values[1]],
-														v_vertices[values[2]]));
-					// assign material properties
-					v_primitives.back()->prim_diffuse = diffuse;
-					v_primitives.back()->prim_specular = specular;
-					v_primitives.back()->prim_emission = emission;
-					v_primitives.back()->prim_shininess = shininess;
-					v_primitives.back()->prim_ambient = ambient;
+					if (validinput)
+					{
+						v_primitives.push_back(new triangle(v_vertices[values[0]],
+															v_vertices[values[1]],
+															v_vertices[values[2]]));
+						// assign material properties
+						v_primitives.back()->prim_diffuse = diffuse;
+						v_primitives.back()->prim_specular = specular;
+						v_primitives.back()->prim_emission = emission;
+						v_primitives.back()->prim_shininess = shininess;
+						v_primitives.back()->prim_ambient = ambient;
+						v_primitives.back()->m_transform_stack = transform_stack.top();
+						v_primitives.back()->m_transform_stack_inv = glm::inverse(transform_stack.top());
+					}
 				}
 				else if (cmd == "sphere")
 				{
 					validinput = readvals(s, 4, values);
-					v_primitives.push_back(new sphere(glm::vec3(values[0], values[1], values[2]), // center
- 													values[3]) // radius
-													);
-					// assign material properties
-					v_primitives.back()->prim_diffuse = diffuse;
-					v_primitives.back()->prim_specular = specular;
-					v_primitives.back()->prim_emission = emission;
-					v_primitives.back()->prim_shininess = shininess;
-					v_primitives.back()->prim_ambient = ambient;
+					if (validinput)
+					{
+						v_primitives.push_back(new sphere(glm::vec3(values[0], values[1], values[2]), // center
+																	values[3]) // radius
+																	);
+						// assign material properties
+						v_primitives.back()->prim_diffuse = diffuse;
+						v_primitives.back()->prim_specular = specular;
+						v_primitives.back()->prim_emission = emission;
+						v_primitives.back()->prim_shininess = shininess;
+						v_primitives.back()->prim_ambient = ambient;
+						v_primitives.back()->m_transform_stack = transform_stack.top();
+						v_primitives.back()->m_transform_stack_inv = glm::inverse(transform_stack.top());
+					}
 
 				}
+
+				// TODO verify correct, material transforms
+				else if (cmd == "translate")
+				{
+					validinput = readvals(s, 3, values);
+					if (validinput)
+					{
+						glm::mat4 translate_matrix = camera::translate(values[0], values[1], values[2]);
+						rightmultiply(translate_matrix, transform_stack);
+					}
+
+				}
+				else if (cmd == "scale")
+				{
+					validinput = readvals(s, 3, values);
+					if (validinput)
+					{
+						glm::mat4 scale_matrix = camera::scale(values[0], values[1], values[2]);
+						rightmultiply(scale_matrix, transform_stack);
+					}
+				}
+				else if (cmd == "rotate")
+				{
+					validinput = readvals(s, 4, values);
+					if (validinput)
+					{
+						glm::vec3 temp_vec = glm::vec3(values[0], values[1], values[2]);
+						// TODO is this needed?		temp_vec = normalize(temp_vec);
+						glm::mat4 rotation_mat = glm::mat4(camera::rotate(values[3], temp_vec));
+						rightmultiply(rotation_mat, transform_stack);
+					}
+				}
+
 
 				// I include the basic push/pop code for matrix stacks
 				else if (cmd == "pushTransform")
@@ -175,6 +218,20 @@ bool scene::readvals(std::stringstream &s, const int numvals, float* values)
 		}
 	}
 	return true;
+}
+
+void scene::rightmultiply(const glm::mat4 & M, std::stack<glm::mat4>& transfstack)
+{
+	glm::mat4 &T = transfstack.top();
+	T = T * M;
+}
+
+void scene::matransform(std::stack<glm::mat4>& transfstack, float * values)
+{
+	glm::mat4 transform = transfstack.top();
+	glm::vec4 valvec = glm::vec4(values[0], values[1], values[2], values[3]);
+	glm::vec4 newval = transform * valvec;
+	for (int i = 0; i < 4; i++) values[i] = newval[i];
 }
 
 scene::scene()

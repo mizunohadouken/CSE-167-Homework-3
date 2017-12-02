@@ -39,6 +39,9 @@ public:
 	// methods
 	void readfile(const char* filename);
 	bool readvals(std::stringstream & s, const int numvals, float * values);
+	void rightmultiply(const glm::mat4 & M, std::stack<glm::mat4> &transfstack);
+	void matransform(std::stack<glm::mat4> &transfstack, float* values);
+
 	scene();
 	~scene();
 
