@@ -35,26 +35,73 @@ bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitiv
 	return (out_primitive_hit != nullptr);
 }
 
-glm::vec3 raytracer::compute_pixel_color(const ray & rayshot, std::vector<primitive*> scene_primitives)
+glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primitive*>& scene_primitives, std::vector<light*>& scene_lights, glm::vec3& light_attenuation)
 {
-	glm::vec3 hit_color = glm::vec3(0);
+	glm::vec3 light_dir_pos,
+			  temp_vec,
+			  prim_intersection,
+			  half_vec,
+	   		  hit_color = glm::vec3(0);
 	const primitive *out_primitive_hit = nullptr;
 	float out_t; // hit scalar in ray equation;
 
 	if (trace_ray_to_primitive(rayshot, scene_primitives, out_t, out_primitive_hit))
 	{
 		// TODO complete algorithm to determine pixel color
+		prim_intersection = rayshot.ray_origin + rayshot.ray_dir * out_t;
+		hit_color = out_primitive_hit->prim_ambient + out_primitive_hit->prim_emission;
+
+		for (int i = 0; i < scene_lights.size(); i++)
+		{
+			if (scene_lights[i]->use_attenuation = true) // if true, point light
+			{
+				light_dir_pos = glm::normalize((scene_lights[i]->dir_pos) - prim_intersection);
+				// TODO fill attenuation equation
+			}
+			else if (scene_lights[i]->use_attenuation = false) // if false, directional light
+			{
+				// TODO fill attenuation equation
+			}
+			half_vec = glm::normalize(light_dir_pos + rayshot.ray_origin); // TODO verify this is correct
+	/*		
+			Lambert_Phong(light_dir_pos,			
+							nOrMaL, // TODO calculate primitive normal
+						half_vec,
+						out_primitive_hit->prim_diffuse,
+						out_primitive_hit->prim_specular,
+						out_primitive_hit->prim_shininess);
+						*/
+			(scene_lights[i]->color);
+		}
+
+		
 		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.b))); // clamp between 0 and 1
 		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.g)));
 		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.r)));
+		
+
 	}
 
 	return hit_color;
 }
 
-// TODO fragment shader
-/*
+// TODO pixel shader
+glm::vec3 raytracer::Lambert_Phong(const glm::vec3& direction,
+					   const glm::vec3& normal, const glm::vec3& halfvec,
+					   const glm::vec3& mydiffuse, const glm::vec3 &myspecular, const float myshininess)
+{
+	float nDotL = dot(normal, direction);
+	glm::vec3 lambert = mydiffuse * std::max(nDotL, 0.0f);
+	
+	float nDotH = dot(normal, halfvec);
+	glm::vec3 phong = myspecular * pow(std::max(nDotH, 0.0f), myshininess);
 
+	glm::vec3 retval = lambert + phong;
+	return retval;
+}
+
+
+/*
 glm::vec3 raytracer::shader_equations()
 {
 		glm::vec4 finalcolor;

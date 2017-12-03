@@ -75,6 +75,8 @@ int main(int argc, char *argv[])
 	float fovy = scene.fovy;
 	// Scene primitives
 	std::vector<primitive*> primitives = scene.v_primitives;
+	// Scene lights
+	std::vector<light*> scene_lights = scene.v_scene_lights;
 
 
 
@@ -87,18 +89,22 @@ int main(int argc, char *argv[])
 	std::cout << "Max Verts: " << scene.max_verts << "\n";
 	std::cout << "Number of vertices: " << scene.v_vertices.size() << "\n";
 	std::cout << "Number of primitives: " << primitives.size() << "\n";
+	std::cout << "Number of lights: " << scene_lights.size() << "\n";
 	std::cout << "K-eps: " << k_eps << "\n";
 	
-	std::vector<light*> scene_lights = scene.v_scene_lights;
-	std::cout << "Number of lights " << scene_lights.size() << "\n";
-	printf("Light Dir Vec\n");
-	printvec3(scene_lights.back()->dir_pos);
-	printf("Light Color Vec\n");
-	printvec3(scene_lights.back()->color);
-	std::cout << "Use attenuation? = " << scene_lights.back()->use_attenuation << "\n";
-	printf("Attenuation\n");
+	
+	if (!scene_lights.empty())
+	{
+		std::cout << "Number of lights " << scene_lights.size() << "\n";
+		printf("Light Dir Vec\n");
+		printvec3(scene_lights.back()->dir_pos);
+		printf("Light Color Vec\n");
+		printvec3(scene_lights.back()->color);
+		std::cout << "Use attenuation? = " << scene_lights.back()->use_attenuation << "\n";
+		printf("Attenuation\n");
+	}
 	printvec3(scene.attenuation);
-
+	
 	std::cout << "Primitive ambient\n";
 	printvec3(primitives.back()->prim_ambient);
 
@@ -117,7 +123,7 @@ int main(int argc, char *argv[])
 
 			//!!!!!!!!!!!!!!!!!!Testing ground
 
-			color_vec = raytracer::compute_pixel_color(ray_through_pixel, primitives);
+			color_vec = raytracer::compute_pixel_color(ray_through_pixel, primitives, scene_lights, scene.attenuation);
 						
 			//!!!!!!!!!!!!!!End testing ground
 

@@ -46,7 +46,6 @@ public:
 	glm::vec3 diffuse, specular, emission, ambient;
 	float shininess;
 
-
 	// geometry/primitives
 	std::vector<primitive*> v_primitives;
 	std::vector<glm::vec3> v_vertices;
