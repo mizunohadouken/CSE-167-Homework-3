@@ -75,9 +75,9 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 		}
 
 		
-		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.b))); // clamp between 0 and 1
-		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.g)));
-		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_ambient.r)));
+		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_emission.b))); // clamp between 0 and 1
+		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_emission.g)));
+		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_emission.r)));
 		
 
 	}

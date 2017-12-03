@@ -31,6 +31,7 @@ public:
 	// variables to parse
 
 	// scene defaults
+	char filename;
 	float width, height;
 	int max_verts;
 

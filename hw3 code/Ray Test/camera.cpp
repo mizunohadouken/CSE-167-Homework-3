@@ -111,8 +111,8 @@ ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy
 	fovy = fovy*M_PI / 180.0f;  // Convert degrees to rads
 
 	float tan_fovx2 = tan(fovy / 2.0f)*width / height;
-	float alpha = tan_fovx2 * ((j_pixel - (width / 2.0f)) / (width / 2.0f));
-	float beta = tan(fovy / 2.0f) * (((height / 2.0f) - i_pixel) / (height / 2.0f));
+	float alpha = tan_fovx2 * ((j_pixel +.5f - (width / 2.0f)) / (width / 2.0f)); // TODO check pixel offset?
+	float beta = tan(fovy / 2.0f) * (((height / 2.0f) - i_pixel - .5f) / (height / 2.0f)); // TODO check pixel offset?
 
 	glm::vec3 ray_dir_temp = alpha*u + beta*v - w;
 	ray ray_shot(eye, glm::normalize(ray_dir_temp));

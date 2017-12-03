@@ -1,4 +1,21 @@
 ﻿  raytracer.cpp
 c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\primitive.h(7): warning C4305: 'initializing': truncation from 'double' to 'float'
 c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\raytracer.cpp(54): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  Compiling...
+  scene.cpp
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\primitive.h(7): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\scene.cpp(142): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\scene.cpp(154): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\scene.cpp(155): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\scene.cpp(156): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\scene.cpp(40): warning C4101: 'i': unreferenced local variable
+  main.cpp
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\primitive.h(7): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(55): warning C4018: '<': signed/unsigned mismatch
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(70): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(131): warning C4244: '=': conversion from 'float' to 'BYTE', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(132): warning C4244: '=': conversion from 'float' to 'BYTE', possible loss of data
+c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\main.cpp(133): warning C4244: '=': conversion from 'float' to 'BYTE', possible loss of data
+  Generating Code...
   Ray Test.vcxproj -> C:\Users\Andrew\Desktop\Courses\CSE167\Homework 3\hw3 code\Debug\Ray Test.exe
