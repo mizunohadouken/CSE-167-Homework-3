@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
 {
 	// Parse file to extract scene variables
 	scene scene;
+	scene.output_filename = "default.png";
 	scene.readfile(argv[1]);
 	
 	// Assign scene varibles
@@ -84,6 +85,7 @@ int main(int argc, char *argv[])
 	// TODO remove testing ground
 	// Print debugging area
 	// !!!!!!!!!!!!!!!!!!!!!!!!!
+	printf("Look at vector:\n");
 	printvec3(scene.LookAt);
 	std::cout << scene.width << " " << scene.height << "\n";
 	std::cout << "Max Verts: " << scene.max_verts << "\n";
@@ -91,11 +93,9 @@ int main(int argc, char *argv[])
 	std::cout << "Number of primitives: " << primitives.size() << "\n";
 	std::cout << "Number of lights: " << scene_lights.size() << "\n";
 	std::cout << "K-eps: " << k_eps << "\n";
-	
-	
+
 	if (!scene_lights.empty())
 	{
-		std::cout << "Number of lights " << scene_lights.size() << "\n";
 		printf("Light Dir Vec\n");
 		printvec3(scene_lights.back()->dir_pos);
 		printf("Light Color Vec\n");
@@ -104,9 +104,23 @@ int main(int argc, char *argv[])
 		printf("Attenuation\n");
 	}
 	printvec3(scene.attenuation);
-	
+
 	std::cout << "Primitive ambient\n";
 	printvec3(primitives.back()->prim_ambient);
+	/*
+	glm::vec3 vert_1 = glm::vec3(-1.f, -1.f, 0),
+		vert_2 = glm::vec3(1.f, -1.f, 0),
+		vert_3 = glm::vec3(1.f, 1.f, 0),
+		vert_4 = glm::vec3(-1.f, 1.f, 0);
+
+	triangle test_tri(vert_1, vert_2, vert_3);
+	printf("Normal 1\n");
+	printvec3(glm::cross(test_tri.v2 - test_tri.v1, test_tri.v0 - test_tri.v1));
+	printf("Normal 2\n");
+	printvec3(glm::cross(test_tri.v1 - test_tri.v0, test_tri.v2 - test_tri.v0));
+	printf("Normal 3\n");
+	printvec3(glm::cross(test_tri.v0 - test_tri.v2, test_tri.v1 - test_tri.v2));
+	*/
 
 	// !!!!!!!!!!!!!
 	// !!!!!!!!!!!!!
@@ -135,9 +149,9 @@ int main(int argc, char *argv[])
 		int counter = i % 50;
 		if (counter == 0) std::cout << "Tracing pixel row: " << i << "\n";
 	}
-
+	
 	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixel_array, Width, Height, Width * 3, 24, 0xFF0000, 0xFF0000, 0xFF0000, false);
-	FreeImage_Save(FIF_PNG, img, "filename.png", 0);
+	FreeImage_Save(FIF_PNG, img, scene.output_filename.c_str(), 0);
 	
 	// End Program Display Text
 	std::cout << "\n********************" << "\n";

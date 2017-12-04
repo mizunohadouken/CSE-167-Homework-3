@@ -75,6 +75,10 @@ void scene::readfile(const char * filename)
 						height = values[1];
 					}
 				}
+				else if (cmd == "output")
+				{
+					s >> output_filename;
+				}
 
 				// lights
 				else if (cmd == "directional")

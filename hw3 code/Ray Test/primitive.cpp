@@ -11,7 +11,14 @@ primitive::~primitive()
 
 bool primitive::intersect(const ray ray_shot, float & out_t)
 {
+	std::cerr << "Unknown primitive calling intersect method\n";
 	return false;
+}
+
+glm::vec3 primitive::get_normal(glm::vec3& intersect_point) const
+{
+	std::cerr << "Unknown primitive calling get_normal method\n";
+	return glm::vec3();
 }
 
 ray primitive::inv_transform_ray(const ray & ray_to_inv)
@@ -97,6 +104,18 @@ float sphere::get_radius()
 	return radius;
 }
 
+glm::vec3 sphere::get_normal(glm::vec3 & intersect_point) const //TODO verify correct
+{
+	glm::vec4 v_obj_space = m_transform_stack_inv *(glm::vec4(intersect_point, 0.0f));
+	glm::vec4 obj_space_normal = glm::normalize(v_obj_space - glm::vec4(center, 0.0f));
+	glm::vec4 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
+//	float w_inv = 1 / world_space_normal.w;
+//	glm::vec3 dehom_normal = glm::vec3(world_space_normal.x * w_inv,
+//									   world_space_normal.y * w_inv,
+//									   world_space_normal.z * w_inv);
+	return glm::vec3(world_space_normal);
+}
+
 triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
 {
 	v0 = v0_con;
@@ -108,8 +127,6 @@ triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
 
 	prim_ambient = glm::vec3(.2f, .2f, .2f); // TODO default ambient
 }
-
-
 
 bool triangle::intersect(const ray ray_shot, float &out_t)
 {
@@ -131,5 +148,13 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 	if (gamma < 0 || beta + gamma > 1) return false;
 
 	out_t = (glm::dot(temp_vec_Q, v0v2)) * det_inverse;
+
 	return true;
+}
+
+glm::vec3 triangle::get_normal (glm::vec3 & intersect_point) const// TODO verify correct
+{
+	glm::vec4 obj_space_normal = glm::vec4(tri_normal, 1.0f);
+	glm::vec3 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
+	return world_space_normal;
 }

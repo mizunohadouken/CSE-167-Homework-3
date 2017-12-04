@@ -31,7 +31,7 @@ public:
 	// variables to parse
 
 	// scene defaults
-	char filename;
+	std::string output_filename;
 	float width, height;
 	int max_verts;
 

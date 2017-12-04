@@ -37,10 +37,10 @@ bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitiv
 
 glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primitive*>& scene_primitives, std::vector<light*>& scene_lights, glm::vec3& light_attenuation)
 {
-	glm::vec3 light_dir_pos,
-			  temp_vec,
+	glm::vec3  temp_vec,
 			  prim_intersection,
 			  half_vec,
+			  light_sum = glm::vec3(0),
 	   		  hit_color = glm::vec3(0);
 	const primitive *out_primitive_hit = nullptr;
 	float out_t; // hit scalar in ray equation;
@@ -49,37 +49,42 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 	{
 		// TODO complete algorithm to determine pixel color
 		prim_intersection = rayshot.ray_origin + rayshot.ray_dir * out_t;
-		hit_color = out_primitive_hit->prim_ambient + out_primitive_hit->prim_emission;
 
 		for (int i = 0; i < scene_lights.size(); i++)
 		{
-			if (scene_lights[i]->use_attenuation = true) // if true, point light
+			glm::vec3 calc_atten = glm::vec3(0),
+					  light_dir_pos = glm::vec3(0);
+
+			if (((scene_lights[i]->use_attenuation))==1) // if true, point light
 			{
 				light_dir_pos = glm::normalize((scene_lights[i]->dir_pos) - prim_intersection);
 				// TODO fill attenuation equation
+				float dist_to_light = glm::length(light_dir_pos);
+				calc_atten = (scene_lights[i]->color)/(light_attenuation.x + (light_attenuation.y)*dist_to_light + light_attenuation.z*(pow(dist_to_light, 2)));
 			}
-			else if (scene_lights[i]->use_attenuation = false) // if false, directional light
+			else if ((scene_lights[i]->use_attenuation) == 0) // if false, directional light
 			{
+				light_dir_pos = glm::normalize(scene_lights[i]->dir_pos);
 				// TODO fill attenuation equation
+				calc_atten = scene_lights[i]->color;
 			}
 			half_vec = glm::normalize(light_dir_pos + rayshot.ray_origin); // TODO verify this is correct
-	/*		
-			Lambert_Phong(light_dir_pos,			
-							nOrMaL, // TODO calculate primitive normal
-						half_vec,
-						out_primitive_hit->prim_diffuse,
-						out_primitive_hit->prim_specular,
-						out_primitive_hit->prim_shininess);
-						*/
-			(scene_lights[i]->color);
+			glm::vec3 hit_normal = glm::normalize(out_primitive_hit->get_normal(prim_intersection));
+
+			glm::vec3 lamb_phong= Lambert_Phong(light_dir_pos,
+								  hit_normal, // TODO calculate primitive normal
+								  half_vec,
+								  out_primitive_hit->prim_diffuse,
+								  out_primitive_hit->prim_specular,
+								  out_primitive_hit->prim_shininess);
+
+			light_sum = light_sum + calc_atten*lamb_phong;
 		}
 
-		
-		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_emission.b))); // clamp between 0 and 1
-		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_emission.g)));
-		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, out_primitive_hit->prim_emission.r)));
-		
-
+		glm::vec3 calc_color = out_primitive_hit->prim_ambient + out_primitive_hit->prim_emission + light_sum;
+		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.b))); // clamp between 0 and 1
+		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.g)));
+		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.r)));
 	}
 
 	return hit_color;

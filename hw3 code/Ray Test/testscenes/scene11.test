@@ -1,6 +1,8 @@
 # Test Scene 1 
 # A simple quad viewed from different camera positions
 
+output scene1test.png
+
 size 640 480 
 
 # Now specify the camera.  This is what you should implement.
