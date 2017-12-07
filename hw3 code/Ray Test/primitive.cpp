@@ -21,7 +21,7 @@ glm::vec3 primitive::get_normal(glm::vec3& intersect_point) const
 	return glm::vec3();
 }
 
-ray primitive::inv_transform_ray(const ray & ray_to_inv)
+ray primitive::inv_transform_ray(const ray & ray_to_inv) const
 {
 	glm::vec4 ray_org_hom = glm::vec4(ray_to_inv.ray_origin, 1.0f);
 	glm::vec4 ray_dir_hom = glm::vec4(ray_to_inv.ray_dir, 0.0f);
@@ -106,13 +106,14 @@ float sphere::get_radius()
 
 glm::vec3 sphere::get_normal(glm::vec3 & intersect_point) const //TODO verify correct
 {
-	glm::vec4 v_obj_space = m_transform_stack_inv *(glm::vec4(intersect_point, 0.0f));
-	glm::vec4 obj_space_normal = glm::normalize(v_obj_space - glm::vec4(center, 0.0f));
-	glm::vec4 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
-//	float w_inv = 1 / world_space_normal.w;
-//	glm::vec3 dehom_normal = glm::vec3(world_space_normal.x * w_inv,
-//									   world_space_normal.y * w_inv,
-//									   world_space_normal.z * w_inv);
+	glm::vec4 v_obj_space = m_transform_stack_inv *(glm::vec4(intersect_point, 1.0f));
+	glm::vec4 obj_space_normal = glm::normalize(v_obj_space - glm::vec4(center, 1.0f));
+	float w_inv = 1 / obj_space_normal.w;
+	glm::vec3 dehom_normal = glm::vec3(obj_space_normal.x * w_inv,
+									   obj_space_normal.y * w_inv,
+									   obj_space_normal.z * w_inv);
+	glm::vec3 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
+	
 	return glm::vec3(world_space_normal);
 }
 
@@ -155,6 +156,10 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 glm::vec3 triangle::get_normal (glm::vec3 & intersect_point) const// TODO verify correct
 {
 	glm::vec4 obj_space_normal = glm::vec4(tri_normal, 1.0f);
-	glm::vec3 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
+	glm::vec4 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
+	float w_inv = 1 / world_space_normal.w;
+	glm::vec3 dehom_normal = glm::vec3(world_space_normal.x * w_inv,
+		world_space_normal.y * w_inv,
+		world_space_normal.z * w_inv);
 	return world_space_normal;
 }

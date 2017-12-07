@@ -42,43 +42,88 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 			  half_vec,
 			  light_sum = glm::vec3(0),
 	   		  hit_color = glm::vec3(0);
-	const primitive *out_primitive_hit = nullptr;
-	float out_t; // hit scalar in ray equation;
+	const primitive *out_primitive_hit = nullptr,
+					*temp_prim = nullptr;
+	float out_t, temp_t; // hit scalar in ray equation;
 
 	if (trace_ray_to_primitive(rayshot, scene_primitives, out_t, out_primitive_hit))
 	{
-		// TODO complete algorithm to determine pixel color
-		prim_intersection = rayshot.ray_origin + rayshot.ray_dir * out_t;
+		prim_intersection = rayshot.ray_origin + rayshot.ray_dir * out_t; // TODO Check this
+		
 
 		for (int i = 0; i < scene_lights.size(); i++)
 		{
-			glm::vec3 calc_atten = glm::vec3(0),
-					  light_dir_pos = glm::vec3(0);
 
-			if (((scene_lights[i]->use_attenuation))==1) // if true, point light
+			/*
+			// TODO verify shadow !!!!!!!!!!!!!!!!!
+			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			glm::vec3 v_light_dir = glm::normalize(prim_intersection - (scene_lights[i]->dir_pos)); // TODO verify? point and directional same?
+			ray r_inter_to_light(prim_intersection + k_eps*out_primitive_hit->get_normal(prim_intersection), // move ray origin small distance towards light
+								v_light_dir);
+			;
+			
+			// iterate through all scene primitives to check is light is obstructed
+			std::vector<primitive*>::iterator iterator = scene_primitives.begin();
+			bool is_visible = true;
+			for (; iterator != scene_primitives.end(); ++iterator)
+			{
+				float out_temp_t = INFINITY;
+				ray inv_ray = (*iterator)->inv_transform_ray(r_inter_to_light);
+				if ((*iterator)->intersect(inv_ray, out_temp_t))
+				{
+					is_visible = false;
+				}
+			}
+			
+			if(is_visible) // !!!!!!!!!!!!!!!!!
+				//!!!!!!!!!!!!!!!!!!!!!!
+				// !!!!!!!!!!!!!!!!!!!!!!!!
+				// !!!!!!!!!!!!!!!!!!!!!!!!
+				*/
+
+			bool is_visible = true;
+			glm::vec3 calc_atten = glm::vec3(0),
+				light_dir_pos = glm::vec3(0);
+
+			if (((scene_lights[i]->use_attenuation)) == 1) // if true, point light
 			{
 				light_dir_pos = glm::normalize((scene_lights[i]->dir_pos) - prim_intersection);
-				// TODO fill attenuation equation
-				float dist_to_light = glm::length(light_dir_pos);
-				calc_atten = (scene_lights[i]->color)/(light_attenuation.x + (light_attenuation.y)*dist_to_light + light_attenuation.z*(pow(dist_to_light, 2)));
+
+				float r = glm::length((scene_lights[i]->dir_pos) - prim_intersection);
+				//	calc_atten = scene_lights[i]->color;
+				calc_atten = (scene_lights[i]->color);// / (light_attenuation.x + (light_attenuation.y)*r + (light_attenuation.z)*r*r);
 			}
-			else if ((scene_lights[i]->use_attenuation) == 0) // if false, directional light
+			else if ((scene_lights[i]->use_attenuation) == 0) // if false, directional light, no attenuation
 			{
-				light_dir_pos = glm::normalize(scene_lights[i]->dir_pos);
-				// TODO fill attenuation equation
+				light_dir_pos = -(glm::normalize(scene_lights[i]->dir_pos));
 				calc_atten = scene_lights[i]->color;
 			}
-			half_vec = glm::normalize(light_dir_pos + rayshot.ray_origin); // TODO verify this is correct
-			glm::vec3 hit_normal = glm::normalize(out_primitive_hit->get_normal(prim_intersection));
 
-			glm::vec3 lamb_phong= Lambert_Phong(light_dir_pos,
-								  hit_normal, // TODO calculate primitive normal
-								  half_vec,
-								  out_primitive_hit->prim_diffuse,
-								  out_primitive_hit->prim_specular,
-								  out_primitive_hit->prim_shininess);
+			/*
+			// Shadow
+			glm::vec3 v_light_dir = glm::normalize(light_dir_pos); // TODO verify? point and directional same?
+			ray r_inter_to_light(prim_intersection + k_eps*out_primitive_hit->get_normal(prim_intersection), // move ray origin small distance towards light
+								v_light_dir);
 
-			light_sum = light_sum + calc_atten*lamb_phong;
+			is_visible = !(trace_ray_to_primitive(r_inter_to_light, scene_primitives, temp_t, temp_prim));
+			*/
+
+			// Calculate color at pixel using lambert and phong
+			if (is_visible)
+			{
+				half_vec = glm::normalize(light_dir_pos + glm::normalize(rayshot.ray_origin)); // TODO verify this is correct
+				glm::vec3 hit_normal = glm::normalize(out_primitive_hit->get_normal(prim_intersection));
+
+				glm::vec3 lamb_phong = Lambert_Phong(light_dir_pos,
+					hit_normal,
+					half_vec,
+					out_primitive_hit->prim_diffuse,
+					out_primitive_hit->prim_specular,
+					out_primitive_hit->prim_shininess);
+
+				light_sum = light_sum + calc_atten*lamb_phong;
+			}
 		}
 
 		glm::vec3 calc_color = out_primitive_hit->prim_ambient + out_primitive_hit->prim_emission + light_sum;
@@ -98,10 +143,10 @@ glm::vec3 raytracer::Lambert_Phong(const glm::vec3& direction,
 	float nDotL = dot(normal, direction);
 	glm::vec3 lambert = mydiffuse * std::max(nDotL, 0.0f);
 	
-	float nDotH = dot(normal, halfvec);
-	glm::vec3 phong = myspecular * pow(std::max(nDotH, 0.0f), myshininess);
+//	float nDotH = dot(normal, halfvec);
+//	glm::vec3 phong = myspecular * pow(std::max(nDotH, 0.0f), myshininess);
 
-	glm::vec3 retval = lambert + phong;
+	glm::vec3 retval = lambert;// +phong;
 	return retval;
 }
 

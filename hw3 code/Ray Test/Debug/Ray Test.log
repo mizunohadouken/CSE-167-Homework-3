@@ -1,4 +1,3 @@
-﻿  raytracer.cpp
+﻿  primitive.cpp
 c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\primitive.h(8): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\raytracer.cpp(53): warning C4018: '<': signed/unsigned mismatch
   Ray Test.vcxproj -> C:\Users\Andrew\Desktop\Courses\CSE167\Homework 3\hw3 code\Debug\Ray Test.exe

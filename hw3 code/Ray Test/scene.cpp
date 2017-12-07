@@ -282,7 +282,7 @@ void scene::matransform(std::stack<glm::mat4>& transfstack, float * values)
 
 scene::scene()
 {
-	attenuation = glm::vec3(1.0f, 0.f, 0.f); // TODO check default attenuation (0.f, 0.f, 1.f) for point light?
+	attenuation = glm::vec3(0.f, 0.f, 1.f); // TODO check default attenuation (0.f, 0.f, 1.f) for point light?
 }
 
 scene::~scene()

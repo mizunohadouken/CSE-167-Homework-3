@@ -18,7 +18,7 @@ public:
 	// methods
 	virtual bool intersect(const ray ray_shot, float &out_t);
 	virtual glm::vec3 get_normal (glm::vec3& intersect_point) const; // TODO review const
-	ray inv_transform_ray(const ray& ray_to_inv);
+	ray inv_transform_ray(const ray& ray_to_inv) const;
 	float revert_t(ray& trans_ray, float& inv_t, glm::vec3 ray_origin);
 
 	// material properties
