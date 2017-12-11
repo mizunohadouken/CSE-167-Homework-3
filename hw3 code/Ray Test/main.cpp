@@ -107,6 +107,15 @@ int main(int argc, char *argv[])
 
 	std::cout << "Primitive ambient\n";
 	printvec3(primitives.back()->prim_ambient);
+
+	float light_denom = 1 / scene_lights[0]->dir_pos.w;
+	printf("Light Denom\n");
+	std::cout << light_denom << "\n";
+	printf("Scene Lights Dir/Pos\n");
+	printvec3(scene_lights[0]->dir_pos);
+	printf("Scene Lights Dir/Pos dehom\n");
+	glm::vec3 dehom_light_pos = scene_lights[0]->dir_pos*light_denom;
+	printvec3(dehom_light_pos);
 	/*
 	glm::vec3 vert_1 = glm::vec3(-1.f, -1.f, 0),
 		vert_2 = glm::vec3(1.f, -1.f, 0),

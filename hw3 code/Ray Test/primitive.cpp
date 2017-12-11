@@ -106,15 +106,17 @@ float sphere::get_radius()
 
 glm::vec3 sphere::get_normal(glm::vec3 & intersect_point) const //TODO verify correct
 {
-	glm::vec4 v_obj_space = m_transform_stack_inv *(glm::vec4(intersect_point, 1.0f));
-	glm::vec4 obj_space_normal = glm::normalize(v_obj_space - glm::vec4(center, 1.0f));
-	float w_inv = 1 / obj_space_normal.w;
-	glm::vec3 dehom_normal = glm::vec3(obj_space_normal.x * w_inv,
-									   obj_space_normal.y * w_inv,
-									   obj_space_normal.z * w_inv);
-	glm::vec3 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
-	
-	return glm::vec3(world_space_normal);
+	glm::vec4 obj_space_p = m_transform_stack_inv *(glm::vec4(intersect_point, 1.0f));
+	float w_inv = 1 / obj_space_p.w;
+	glm::vec4 dehom_obj_space_p = glm::vec4(obj_space_p.x * w_inv,
+										  obj_space_p.y * w_inv,
+										  obj_space_p.z * w_inv,
+										  0.f);
+
+	glm::vec4 obj_space_normal = dehom_obj_space_p - glm::vec4(center, 0.f); // TODO need to normalize?
+	glm::vec4 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
+
+	return glm::vec3(world_space_normal); // TODO need to normalize?
 }
 
 triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
@@ -123,8 +125,8 @@ triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
 	v1 = v1_con;
 	v2 = v2_con;
 
-	tri_normal = glm::cross((v1 - v0), (v2 - v0));
-//	tri_normal = glm::normalize(glm::cross((v1 - v0), (v2 - v0))); // TODO check if unit norm needed
+//	tri_normal = glm::cross((v1 - v0), (v2 - v0));
+	tri_normal = glm::normalize(glm::cross((v1 - v0), (v2 - v0))); // TODO check if unit norm needed
 
 	prim_ambient = glm::vec3(.2f, .2f, .2f); // TODO default ambient
 }
@@ -155,11 +157,31 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 
 glm::vec3 triangle::get_normal (glm::vec3 & intersect_point) const// TODO verify correct
 {
-	glm::vec4 obj_space_normal = glm::vec4(tri_normal, 1.0f);
+	glm::vec4 obj_space_normal = glm::normalize(glm::vec4(tri_normal, 0.0f));
 	glm::vec4 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
-	float w_inv = 1 / world_space_normal.w;
-	glm::vec3 dehom_normal = glm::vec3(world_space_normal.x * w_inv,
-		world_space_normal.y * w_inv,
-		world_space_normal.z * w_inv);
-	return world_space_normal;
+//	float w_inv = 1 / world_space_normal.w;
+//	glm::vec3 dehom_normal = glm::vec3(world_space_normal.x * w_inv,
+//		world_space_normal.y * w_inv,
+//		world_space_normal.z * w_inv);
+	return glm::normalize(world_space_normal);  // TODO Need to normalize?
 }
+
+
+/*
+glm::vec3 triangle::get_normal(glm::vec3 & intersect_point) const
+{
+	glm::vec4 temp = m_transform_stack_inv * glm::vec4(intersect_point, 1.0f);
+	glm::vec3 p = glm::vec3(temp.x/temp.w, temp.y / temp.w, temp.z / temp.w);
+
+	
+	glm::vec3 n = glm::cross(v1 - v0, v2 - v0);
+	glm::vec3 tmp_nb = glm::cross(v2- p, v0 - p);
+	glm::vec3 tmp_nc = glm::cross(v0 - p, v1 - p);
+
+	float beta = glm::dot(n, tmp_nb) / glm::dot(n, n);
+	float gamma = glm::dot(n, tmp_nc) / glm::dot(n, n);
+	float alpha = 1.0 - beta - gamma;
+	glm::vec3 ret = (tri_normal * alpha) + (tri_normal* beta) + (tri_normal* gamma);
+	return glm::vec3(glm::vec4(ret, 0.0f) * glm::transpose(this->m_transform_stack_inv));
+}
+*/

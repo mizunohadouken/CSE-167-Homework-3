@@ -8,7 +8,7 @@ light::~light()
 {
 }
 
-light::light(glm::vec3 dir_pos_con, glm::vec3 color_con, bool attenutation_con)
+light::light(glm::vec4 dir_pos_con, glm::vec4 color_con, bool attenutation_con)
 {
 	dir_pos = dir_pos_con;
 	color = color_con;
@@ -27,6 +27,7 @@ void scene::readfile(const char * filename)
 	{
 		std::stack <glm::mat4> transform_stack;
 		transform_stack.push(glm::mat4(1.0f)); // push identity matrix to top of stack
+		// TODO Model-View Matrix
 
 
 		getline(in, str);
@@ -86,8 +87,8 @@ void scene::readfile(const char * filename)
 					validinput = readvals(s, 6, values);
 					if (validinput)
 					{
-						light* temp_light = new light(glm::vec3(values[0], values[1], values[2]), // direction
-													  glm::vec3(values[3], values[4], values[5]), // color
+						light* temp_light = new light(glm::vec4(values[0], values[1], values[2], 0.f), // direction
+													  glm::vec4(values[3], values[4], values[5], 1.f), // color
 													  false);									  // false, directional lights do not use attenuation
 						v_scene_lights.push_back(temp_light);
 					}
@@ -97,8 +98,8 @@ void scene::readfile(const char * filename)
 					validinput = readvals(s, 6, values);
 					if (validinput)
 					{
-						light* temp_light = new light(glm::vec3(values[0], values[1], values[2]), // direction
-											    	  glm::vec3(values[3], values[4], values[5]), // color
+						light* temp_light = new light(glm::vec4(values[0], values[1], values[2], 1.f), // direction
+											    	  glm::vec4(values[3], values[4], values[5], 1.f), // color
 												  	  true);									  // true, point lights do use attenuation
 						v_scene_lights.push_back(temp_light);
 					}
