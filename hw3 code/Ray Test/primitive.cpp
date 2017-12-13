@@ -26,29 +26,29 @@ ray primitive::inv_transform_ray(const ray & ray_to_inv) const
 	glm::vec4 ray_org_hom = glm::vec4(ray_to_inv.ray_origin, 1.0f);
 	glm::vec4 ray_dir_hom = glm::vec4(ray_to_inv.ray_dir, 0.0f);
 
-	glm::vec4 inv_ray_org = m_transform_stack_inv * ray_org_hom;
-	glm::vec4 inv_ray_dir = m_transform_stack_inv * ray_dir_hom;
+	glm::vec4 ray_org_obj_space = m_transform_stack_inv * ray_org_hom;
+	glm::vec4 ray_dir_obj_space = m_transform_stack_inv * ray_dir_hom;
 
 	// demogonize origin and input origin and direction into new ray
-	float inv_w = 1 / inv_ray_org.w;
-	ray inv_ray(glm::vec3(inv_ray_org.x * inv_w, inv_ray_org.y * inv_w, inv_ray_org.z * inv_w),
-				glm::vec3(inv_ray_dir.x, inv_ray_dir.y, inv_ray_dir.z));
+	float inv_w = 1 / ray_org_obj_space.w;
+	ray inv_ray(glm::vec3(ray_org_obj_space.x * inv_w, ray_org_obj_space.y * inv_w, ray_org_obj_space.z * inv_w),
+				glm::vec3(ray_dir_obj_space.x, ray_dir_obj_space.y, ray_dir_obj_space.z));
 
 	return inv_ray;
 }
 
-float primitive::revert_t(ray& trans_ray, float& inv_t, glm::vec3 ray_origin)
+float primitive::revert_t(ray& trans_ray, float& inv_t, glm::vec3 ray_origin, glm::vec3& prim_int_world_space)
 {
 	glm::vec3 inv_ray_int = trans_ray.ray_origin + trans_ray.ray_dir*inv_t;
 	glm::vec4 hom_inv_ray_int = glm::vec4(inv_ray_int, 1.0f);
 	glm::vec4 hom_ray_int_transform = (m_transform_stack) * hom_inv_ray_int;
 
 	float inv_ray_int_w = 1 / hom_ray_int_transform.w;
-	glm::vec3 dehom_ray_int = glm::vec3(hom_ray_int_transform.x * inv_ray_int_w,
-										hom_ray_int_transform.y * inv_ray_int_w,
-										hom_ray_int_transform.z * inv_ray_int_w);
+	prim_int_world_space = glm::vec3(hom_ray_int_transform.x * inv_ray_int_w,
+						   hom_ray_int_transform.y * inv_ray_int_w,
+						   hom_ray_int_transform.z * inv_ray_int_w);
 
-	float t = glm::length(dehom_ray_int - ray_origin);
+	float t = glm::length(prim_int_world_space - ray_origin);
 	return t;
 }
 
@@ -113,10 +113,10 @@ glm::vec3 sphere::get_normal(glm::vec3 & intersect_point) const //TODO verify co
 										  obj_space_p.z * w_inv,
 										  0.f);
 
-	glm::vec4 obj_space_normal = dehom_obj_space_p - glm::vec4(center, 0.f); // TODO need to normalize?
+	glm::vec4 obj_space_normal = glm::normalize(dehom_obj_space_p - glm::vec4(center, 0.f)); // TODO need to normalize?
 	glm::vec4 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
 
-	return glm::vec3(world_space_normal); // TODO need to normalize?
+	return glm::vec3(world_space_normal.x, world_space_normal.y, world_space_normal.z); // TODO need to normalize?
 }
 
 triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
@@ -126,13 +126,53 @@ triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
 	v2 = v2_con;
 
 //	tri_normal = glm::cross((v1 - v0), (v2 - v0));
-	tri_normal = glm::normalize(glm::cross((v1 - v0), (v2 - v0))); // TODO check if unit norm needed
+	N = glm::normalize(glm::cross((v1 - v0), (v2 - v0))); // TODO check if unit norm needed
 
 	prim_ambient = glm::vec3(.2f, .2f, .2f); // TODO default ambient
 }
 
 bool triangle::intersect(const ray ray_shot, float &out_t)
 {
+	glm::vec3 v0v1 = v1 - v0;
+	glm::vec3 v0v2 = v2 - v0;
+	glm::vec3 N = glm::cross(v0v1, v0v2);
+	
+	float NdotRayDir = glm::dot(N, ray_shot.ray_dir);
+	if (fabs(NdotRayDir) < k_eps) // near zero
+	{	return false;	} // ray and plane are parallel
+
+	float d = glm::dot(N, v0);
+	float NdotOrg = glm::dot(N, ray_shot.ray_origin);
+
+	// compute t
+	out_t = (d - NdotOrg) / NdotRayDir; // TODO subtract?
+	if (out_t < 0) return false; // triangle is behind rray
+
+	// compute intersection
+	glm::vec3 P_inter = ray_shot.ray_origin + out_t * ray_shot.ray_dir;
+
+	// Test whether hit point is in our out of triangle using Barycentric Coordinates
+	float area_tri_v012 = glm::length(N) / 2.0f; // TODO calc normal?
+
+	// Sub-triange V1 V2 P
+	glm::vec3 normal_sub_tri = glm::cross((v2 - v1), (P_inter - v1));
+	float area_tri_v1P2 = glm::length(normal_sub_tri) / 2.0f;
+	if (glm::dot(normal_sub_tri, N) < 0) return false; // TODO tri_normal okay?
+
+	// Sub-triange V0 V1 P
+	normal_sub_tri = glm::cross((v1 - v0), (P_inter - v0));
+	float area_tri_v01P = glm::length(normal_sub_tri) / 2.0f;
+	if (glm::dot(normal_sub_tri, N) < 0) return false; // TODO tri_normal okay?
+
+	// Sub-triange V2 V0 P
+	normal_sub_tri = glm::cross((v0 - v2), (P_inter - v2));
+	float area_tri_v20P = glm::length(normal_sub_tri) / 2.0f;
+	if (glm::dot(normal_sub_tri, N) < 0) return false; // TODO tri_normal okay?
+
+	return true;
+
+
+	/*
 	glm::vec3 v0v1 = v1 - v0;
 	glm::vec3 v0v2 = v2 - v0;
 	glm::vec3 temp_vec_p = glm::cross(ray_shot.ray_dir, v0v2);
@@ -153,11 +193,15 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 	out_t = (glm::dot(temp_vec_Q, v0v2)) * det_inverse;
 
 	return true;
+	*/
 }
+
+// TODO try different triangle intersect?
+
 
 glm::vec3 triangle::get_normal (glm::vec3 & intersect_point) const// TODO verify correct
 {
-	glm::vec4 obj_space_normal = glm::normalize(glm::vec4(tri_normal, 0.0f));
+	glm::vec4 obj_space_normal = glm::normalize(glm::vec4(N, 0.0f));
 	glm::vec4 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
 //	float w_inv = 1 / world_space_normal.w;
 //	glm::vec3 dehom_normal = glm::vec3(world_space_normal.x * w_inv,

@@ -99,7 +99,7 @@ glm::vec3 camera::upvector(const glm::vec3 &up, const glm::vec3 & zvec)
 }
 
 // TODO verify ray hitting center of pixel
-ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy, int width, int height, int i_pixel, int j_pixel)
+ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy, int width, int height, float i_pixel, float j_pixel)
 {
 	glm::mat4 coor_frame = camera::make_coordinate_frame(eye, center, up);
 
@@ -111,14 +111,19 @@ ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy
 	fovy = fovy*M_PI / 180.0f;  // Convert degrees to rads
 
 	float tan_fovx2 = tan(fovy / 2.0f)*width / height;
-	float alpha = tan_fovx2 * ((j_pixel +.5f - (width / 2.0f)) / (width / 2.0f)); // TODO check pixel offset?
-	float beta = tan(fovy / 2.0f) * (((height / 2.0f) - i_pixel - .5f) / (height / 2.0f)); // TODO check pixel offset?
+//	float alpha = tan_fovx2 * ((j_pixel +.5f - (width / 2.0f)) / (width / 2.0f)); // TODO check pixel offset?
+//	float beta = tan(fovy / 2.0f) * (((height / 2.0f) - i_pixel - .5f) / (height / 2.0f)); // TODO check pixel offset?
+
+	float alpha = tan_fovx2 * ((j_pixel - (width / 2.0f)) / (width / 2.0f)); // TODO check pixel offset?
+	float beta = tan(fovy / 2.0f) * (((height / 2.0f) - i_pixel) / (height / 2.0f)); // TODO check pixel offset?
 
 	glm::vec3 ray_dir_temp = alpha*u + beta*v - w;
 	ray ray_shot(eye, glm::normalize(ray_dir_temp));
 
 	return ray_shot;
 }
+
+
 
 
 camera::camera()
@@ -129,6 +134,32 @@ camera::camera()
 camera::~camera()
 {
 
+}
+
+glm::mat4 camera::lookAt(const glm::vec3 & eye, const glm::vec3 & center, const glm::vec3 & up)
+{
+	// Create coordinate frame for camera
+	//	vec3 w = normalize(eye - center);
+	glm::vec3 w = normalize(eye);
+	glm::vec3 u = normalize(cross(up, w));
+	glm::vec3 v = cross(w, u);
+
+	// Define Rotation Matrix
+	glm::mat4 mCameraRotation(u.x, v.x, w.x, 0,
+		u.y, v.y, w.y, 0,
+		u.z, v.z, w.z, 0,
+		0, 0, 0, 1);
+
+	// Define translation Matrix
+	glm::mat4 mCameraTranslation(1);
+	mCameraTranslation[3][0] = -eye.x;
+	mCameraTranslation[3][1] = -eye.y;
+	mCameraTranslation[3][2] = -eye.z;
+
+	// Apply translation for camera (eye) location
+	glm::mat4 mM = mCameraRotation * mCameraTranslation;
+
+	return mM;
 }
 
 ray::ray()

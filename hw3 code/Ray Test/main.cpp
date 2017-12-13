@@ -14,7 +14,7 @@
 
 // TODO remove
 // !!!!!!!!!!!!!
-
+/*
 void print4x4Matrix(glm::mat4 mPrintMe)
 {
 	std::cout << mPrintMe[0][0] << " ";
@@ -35,7 +35,7 @@ void print4x4Matrix(glm::mat4 mPrintMe)
 	std::cout << mPrintMe[3][3] << "\n";
 	return;
 }
-
+*/
 void test_line(std::string section_string)
 {
 	std::cout << "made it to: " << section_string << "\n";
@@ -107,15 +107,18 @@ int main(int argc, char *argv[])
 
 	std::cout << "Primitive ambient\n";
 	printvec3(primitives.back()->prim_ambient);
-
-	float light_denom = 1 / scene_lights[0]->dir_pos.w;
-	printf("Light Denom\n");
-	std::cout << light_denom << "\n";
-	printf("Scene Lights Dir/Pos\n");
-	printvec3(scene_lights[0]->dir_pos);
-	printf("Scene Lights Dir/Pos dehom\n");
-	glm::vec3 dehom_light_pos = scene_lights[0]->dir_pos*light_denom;
-	printvec3(dehom_light_pos);
+	
+	if (!scene_lights.empty())
+	{
+		float light_denom = 1 / scene_lights[0]->dir_pos.w;
+		printf("Light Denom: ");
+		std::cout << light_denom << "\n";
+		printf("Scene Lights Dir/Pos\n");
+		printvec3(scene_lights[0]->dir_pos);
+		printf("Scene Lights Dir/Pos dehom\n");
+		glm::vec3 dehom_light_pos = scene_lights[0]->dir_pos*light_denom;
+		printvec3(dehom_light_pos);
+	}
 	/*
 	glm::vec3 vert_1 = glm::vec3(-1.f, -1.f, 0),
 		vert_2 = glm::vec3(1.f, -1.f, 0),
@@ -137,12 +140,18 @@ int main(int argc, char *argv[])
 	// pixel array to input to FreeImage
 	BYTE *pixel_array = new BYTE[3*Width*Height];
 	glm::vec3 color_vec;
-
-	for (int i = 0; i < Height; i++)
+	int temp;
+	for (float i = 0.f; i < Height; i++)
 	{
-		for (int j = 0; j < Width;j++)
+		for (float j = 0.f; j < Width;j++)
 		{
-			ray ray_through_pixel = camera::create_ray(LookFrom, LookAt, UpVec, fovy, Width, Height, i, j);
+			float offset_i = .5, offset_j = .5;
+			offset_i = .5f + i;
+			offset_j = .5f + j;
+			if (offset_j > Width) offset_j = Width - .5f;
+	//		if (offset_i > Height) offset_i = Height - .5f;
+
+			ray ray_through_pixel = camera::create_ray(LookFrom, LookAt, UpVec, fovy, Width, Height, offset_i, offset_j);
 
 			//!!!!!!!!!!!!!!!!!!Testing ground
 
@@ -150,16 +159,19 @@ int main(int argc, char *argv[])
 						
 			//!!!!!!!!!!!!!!End testing ground
 
-			int slot = 3 * ((Height-i - 1)*Width + j);
+//			int slot = 3 * ((Height-i - 1)*Width + j); // starting at bottom left pixel
+			int slot = 3 * ((Width*i)+j);  // start at top right
+
 			*(pixel_array + 0 + slot) = color_vec[0];
 			*(pixel_array + 1 + slot) = color_vec[1];
 			*(pixel_array + 2 + slot) = color_vec[2];
 		}
-		int counter = i % 50;
+		temp = i;
+		int counter = temp % 50;
 		if (counter == 0) std::cout << "Tracing pixel row: " << i << "\n";
 	}
 	
-	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixel_array, Width, Height, Width * 3, 24, 0xFF0000, 0xFF0000, 0xFF0000, false);
+	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixel_array, Width, Height, Width * 3, 24, 0xFF0000, 0xFF0000, 0xFF0000, true);
 	FreeImage_Save(FIF_PNG, img, scene.output_filename.c_str(), 0);
 	
 	// End Program Display Text

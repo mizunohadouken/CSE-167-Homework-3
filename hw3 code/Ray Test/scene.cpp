@@ -1,5 +1,27 @@
 #include "scene.h"
 
+void print4x4Matrix(glm::mat4 mPrintMe)
+{
+	std::cout << mPrintMe[0][0] << " ";
+	std::cout << mPrintMe[1][0] << " ";
+	std::cout << mPrintMe[2][0] << " ";
+	std::cout << mPrintMe[3][0] << "\n";
+	std::cout << mPrintMe[0][1] << " ";
+	std::cout << mPrintMe[1][1] << " ";
+	std::cout << mPrintMe[2][1] << " ";
+	std::cout << mPrintMe[3][1] << "\n";
+	std::cout << mPrintMe[0][2] << " ";
+	std::cout << mPrintMe[1][2] << " ";
+	std::cout << mPrintMe[2][2] << " ";
+	std::cout << mPrintMe[3][2] << "\n";
+	std::cout << mPrintMe[0][3] << " ";
+	std::cout << mPrintMe[1][3] << " ";
+	std::cout << mPrintMe[2][3] << " ";
+	std::cout << mPrintMe[3][3] << "\n";
+	return;
+}
+
+
 light::light()
 {
 }
@@ -8,10 +30,12 @@ light::~light()
 {
 }
 
-light::light(glm::vec4 dir_pos_con, glm::vec4 color_con, bool attenutation_con)
+light::light(glm::vec4 dir_pos_con, glm::vec4 color_con, bool attenutation_con, glm::mat4 model_view)
 {
 	dir_pos = dir_pos_con;
 	color = color_con;
+	transf_dir_pos = model_view * dir_pos_con;
+	transf_dir_pos = model_view * color_con;
 	use_attenuation = attenutation_con;
 }
 
@@ -27,8 +51,7 @@ void scene::readfile(const char * filename)
 	{
 		std::stack <glm::mat4> transform_stack;
 		transform_stack.push(glm::mat4(1.0f)); // push identity matrix to top of stack
-		// TODO Model-View Matrix
-
+		glm::mat4 modelview; // TODO Model-View Matrix
 
 		getline(in, str);
 		while (in)
@@ -65,6 +88,11 @@ void scene::readfile(const char * filename)
 						UpVec = camera::upvector(UpVec, LookFrom);
 
 						fovy = values[9];
+						modelview = camera::lookAt(LookFrom, LookAt, UpVec);
+
+						// TODO remove
+						printf("Model-View Matrix\n");
+						print4x4Matrix(modelview);
 					}
 				}
 				else if (cmd == "size")
@@ -89,7 +117,8 @@ void scene::readfile(const char * filename)
 					{
 						light* temp_light = new light(glm::vec4(values[0], values[1], values[2], 0.f), // direction
 													  glm::vec4(values[3], values[4], values[5], 1.f), // color
-													  false);									  // false, directional lights do not use attenuation
+													  false,									  // false, directional lights do not use attenuation
+													  modelview);
 						v_scene_lights.push_back(temp_light);
 					}
 				}
@@ -100,7 +129,8 @@ void scene::readfile(const char * filename)
 					{
 						light* temp_light = new light(glm::vec4(values[0], values[1], values[2], 1.f), // direction
 											    	  glm::vec4(values[3], values[4], values[5], 1.f), // color
-												  	  true);									  // true, point lights do use attenuation
+												  	  true,									  // true, point lights do use attenuation
+													  modelview);
 						v_scene_lights.push_back(temp_light);
 					}
 				}
