@@ -14,7 +14,7 @@
 
 // TODO remove
 // !!!!!!!!!!!!!
-/*
+
 void print4x4Matrix(glm::mat4 mPrintMe)
 {
 	std::cout << mPrintMe[0][0] << " ";
@@ -35,7 +35,7 @@ void print4x4Matrix(glm::mat4 mPrintMe)
 	std::cout << mPrintMe[3][3] << "\n";
 	return;
 }
-*/
+
 void test_line(std::string section_string)
 {
 	std::cout << "made it to: " << section_string << "\n";
@@ -107,32 +107,7 @@ int main(int argc, char *argv[])
 
 	std::cout << "Primitive ambient\n";
 	printvec3(primitives.back()->prim_ambient);
-	
-	if (!scene_lights.empty())
-	{
-		float light_denom = 1 / scene_lights[0]->dir_pos.w;
-		printf("Light Denom: ");
-		std::cout << light_denom << "\n";
-		printf("Scene Lights Dir/Pos\n");
-		printvec3(scene_lights[0]->dir_pos);
-		printf("Scene Lights Dir/Pos dehom\n");
-		glm::vec3 dehom_light_pos = scene_lights[0]->dir_pos*light_denom;
-		printvec3(dehom_light_pos);
-	}
-	/*
-	glm::vec3 vert_1 = glm::vec3(-1.f, -1.f, 0),
-		vert_2 = glm::vec3(1.f, -1.f, 0),
-		vert_3 = glm::vec3(1.f, 1.f, 0),
-		vert_4 = glm::vec3(-1.f, 1.f, 0);
 
-	triangle test_tri(vert_1, vert_2, vert_3);
-	printf("Normal 1\n");
-	printvec3(glm::cross(test_tri.v2 - test_tri.v1, test_tri.v0 - test_tri.v1));
-	printf("Normal 2\n");
-	printvec3(glm::cross(test_tri.v1 - test_tri.v0, test_tri.v2 - test_tri.v0));
-	printf("Normal 3\n");
-	printvec3(glm::cross(test_tri.v0 - test_tri.v2, test_tri.v1 - test_tri.v2));
-	*/
 
 	// !!!!!!!!!!!!!
 	// !!!!!!!!!!!!!
@@ -141,26 +116,15 @@ int main(int argc, char *argv[])
 	BYTE *pixel_array = new BYTE[3*Width*Height];
 	glm::vec3 color_vec;
 	int temp;
-	for (float i = 0.f; i < Height; i++)
+	for (int i = 0.f; i < Height; i++)
 	{
-		for (float j = 0.f; j < Width;j++)
+		for (int j = 0.f; j < Width;j++)
 		{
-			float offset_i = .5, offset_j = .5;
-			offset_i = .5f + i;
-			offset_j = .5f + j;
-			if (offset_j > Width) offset_j = Width - .5f;
-	//		if (offset_i > Height) offset_i = Height - .5f;
-
-			ray ray_through_pixel = camera::create_ray(LookFrom, LookAt, UpVec, fovy, Width, Height, offset_i, offset_j);
-
-			//!!!!!!!!!!!!!!!!!!Testing ground
-
+			ray ray_through_pixel = camera::create_ray(LookFrom, LookAt, UpVec, fovy, Width, Height, i, j);
 			color_vec = raytracer::compute_pixel_color(ray_through_pixel, primitives, scene_lights, scene.attenuation);
 						
-			//!!!!!!!!!!!!!!End testing ground
-
-//			int slot = 3 * ((Height-i - 1)*Width + j); // starting at bottom left pixel
-			int slot = 3 * ((Width*i)+j);  // start at top right
+			int slot = 3 * ((Height-i - 1)*Width + j); // starting at bottom left pixel
+//			int slot = 3 * ((Width*i)+j);  // start at top right
 
 			*(pixel_array + 0 + slot) = color_vec[0];
 			*(pixel_array + 1 + slot) = color_vec[1];
@@ -171,7 +135,7 @@ int main(int argc, char *argv[])
 		if (counter == 0) std::cout << "Tracing pixel row: " << i << "\n";
 	}
 	
-	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixel_array, Width, Height, Width * 3, 24, 0xFF0000, 0xFF0000, 0xFF0000, true);
+	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixel_array, Width, Height, Width * 3, 24, 0xFF0000, 0xFF0000, 0xFF0000, false);
 	FreeImage_Save(FIF_PNG, img, scene.output_filename.c_str(), 0);
 	
 	// End Program Display Text

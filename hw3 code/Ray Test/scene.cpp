@@ -1,27 +1,5 @@
 #include "scene.h"
 
-void print4x4Matrix(glm::mat4 mPrintMe)
-{
-	std::cout << mPrintMe[0][0] << " ";
-	std::cout << mPrintMe[1][0] << " ";
-	std::cout << mPrintMe[2][0] << " ";
-	std::cout << mPrintMe[3][0] << "\n";
-	std::cout << mPrintMe[0][1] << " ";
-	std::cout << mPrintMe[1][1] << " ";
-	std::cout << mPrintMe[2][1] << " ";
-	std::cout << mPrintMe[3][1] << "\n";
-	std::cout << mPrintMe[0][2] << " ";
-	std::cout << mPrintMe[1][2] << " ";
-	std::cout << mPrintMe[2][2] << " ";
-	std::cout << mPrintMe[3][2] << "\n";
-	std::cout << mPrintMe[0][3] << " ";
-	std::cout << mPrintMe[1][3] << " ";
-	std::cout << mPrintMe[2][3] << " ";
-	std::cout << mPrintMe[3][3] << "\n";
-	return;
-}
-
-
 light::light()
 {
 }
@@ -89,10 +67,6 @@ void scene::readfile(const char * filename)
 
 						fovy = values[9];
 						modelview = camera::lookAt(LookFrom, LookAt, UpVec);
-
-						// TODO remove
-						printf("Model-View Matrix\n");
-						print4x4Matrix(modelview);
 					}
 				}
 				else if (cmd == "size")
@@ -313,7 +287,7 @@ void scene::matransform(std::stack<glm::mat4>& transfstack, float * values)
 
 scene::scene()
 {
-	attenuation = glm::vec3(0.f, 0.f, 1.f); // TODO check default attenuation (0.f, 0.f, 1.f) for point light?
+	attenuation = glm::vec3(1.f, 0.f, 0.f); // TODO check default attenuation (0.f, 0.f, 1.f) for point light?
 }
 
 scene::~scene()

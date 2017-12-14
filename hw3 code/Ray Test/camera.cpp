@@ -98,8 +98,7 @@ glm::vec3 camera::upvector(const glm::vec3 &up, const glm::vec3 & zvec)
 	return ret;
 }
 
-// TODO verify ray hitting center of pixel
-ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy, int width, int height, float i_pixel, float j_pixel)
+ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy, int width, int height, int i_pixel, int j_pixel)
 {
 	glm::mat4 coor_frame = camera::make_coordinate_frame(eye, center, up);
 
@@ -110,20 +109,16 @@ ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy
 
 	fovy = fovy*M_PI / 180.0f;  // Convert degrees to rads
 
+	float pixel_offset = .5f; // used to hit center of pixel
 	float tan_fovx2 = tan(fovy / 2.0f)*width / height;
-//	float alpha = tan_fovx2 * ((j_pixel +.5f - (width / 2.0f)) / (width / 2.0f)); // TODO check pixel offset?
-//	float beta = tan(fovy / 2.0f) * (((height / 2.0f) - i_pixel - .5f) / (height / 2.0f)); // TODO check pixel offset?
-
-	float alpha = tan_fovx2 * ((j_pixel - (width / 2.0f)) / (width / 2.0f)); // TODO check pixel offset?
-	float beta = tan(fovy / 2.0f) * (((height / 2.0f) - i_pixel) / (height / 2.0f)); // TODO check pixel offset?
+	float alpha = tan_fovx2 * ((j_pixel + pixel_offset - (width / 2.0f)) / (width / 2.0f));
+	float beta = tan(fovy / 2.0f) * (((height / 2.0f) - i_pixel - pixel_offset) / (height / 2.0f));
 
 	glm::vec3 ray_dir_temp = alpha*u + beta*v - w;
 	ray ray_shot(eye, glm::normalize(ray_dir_temp));
 
 	return ray_shot;
 }
-
-
 
 
 camera::camera()

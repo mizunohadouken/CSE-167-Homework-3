@@ -25,5 +25,5 @@ public:
 	static glm::mat4 scale(const float &sx, const float &sy, const float &sz);
 	static glm::mat4 translate(const float &tx, const float &ty, const float &tz);
 	static glm::vec3 upvector(const glm::vec3 &up, const glm::vec3 &zvec);
-	static ray create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy, int width, int height, float i_pixel, float j_pixel);
+	static ray create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy, int width, int height, int i_pixel, int j_pixel);
 };

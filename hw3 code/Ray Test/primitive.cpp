@@ -157,22 +157,23 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 	// Sub-triange V1 V2 P
 	glm::vec3 normal_sub_tri = glm::cross((v2 - v1), (P_inter - v1));
 	float area_tri_v1P2 = glm::length(normal_sub_tri) / 2.0f;
-	if (glm::dot(normal_sub_tri, N) < 0) return false; // TODO tri_normal okay?
+	if (glm::dot(normal_sub_tri, N) < 0) return false;
 
 	// Sub-triange V0 V1 P
 	normal_sub_tri = glm::cross((v1 - v0), (P_inter - v0));
 	float area_tri_v01P = glm::length(normal_sub_tri) / 2.0f;
-	if (glm::dot(normal_sub_tri, N) < 0) return false; // TODO tri_normal okay?
+	if (glm::dot(normal_sub_tri, N) < 0) return false;
 
 	// Sub-triange V2 V0 P
 	normal_sub_tri = glm::cross((v0 - v2), (P_inter - v2));
 	float area_tri_v20P = glm::length(normal_sub_tri) / 2.0f;
-	if (glm::dot(normal_sub_tri, N) < 0) return false; // TODO tri_normal okay?
+	if (glm::dot(normal_sub_tri, N) < 0) return false;
 
 	return true;
 
-
 	/*
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// Triangle Intersect Code Below Fails for Some reason when casting shadow ray
 	glm::vec3 v0v1 = v1 - v0;
 	glm::vec3 v0v2 = v2 - v0;
 	glm::vec3 temp_vec_p = glm::cross(ray_shot.ray_dir, v0v2);
@@ -195,9 +196,6 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 	return true;
 	*/
 }
-
-// TODO try different triangle intersect?
-
 
 glm::vec3 triangle::get_normal (glm::vec3 & intersect_point) const// TODO verify correct
 {
