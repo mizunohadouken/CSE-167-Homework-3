@@ -60,33 +60,27 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 
 			if (((scene_lights[i]->use_attenuation)) == 1) // if true, point light
 			{
-				float light_denom = 1 / scene_lights[i]->dir_pos.w;
-				glm::vec3 dehom_light_pos = scene_lights[i]->dir_pos*light_denom;
+				light_direction = glm::normalize(out_prim_int - scene_lights[i]->dir_pos); // TODO check order of subtraction
+				float r = glm::length(light_direction);
 
-				light_direction = glm::normalize(out_prim_int - dehom_light_pos); // TODO check order of subtraction
-				float r = glm::length(light_direction);  // TODO check calculation for magnitude, may be reversed
-	//			light_direction.x = light_direction.x / r;
-	//			light_direction.y = light_direction.y / r;
-	//			light_direction.z = light_direction.z / r;
-
-		//		calc_atten = scene_lights[i]->color;
 				calc_atten = (scene_lights[i]->color) / (light_attenuation.x + (light_attenuation.y)*r + (light_attenuation.z)*r*r); // TODO verify correct
 			}
 			else if ((scene_lights[i]->use_attenuation) == 0) // if false, directional light, no attenuation
 			{
-				light_direction = glm::normalize(scene_lights[i]->dir_pos); // TODO Positive or negative? Normalize?
+				light_direction = -glm::normalize(scene_lights[i]->dir_pos); // TODO Positive or negative? Normalize?
 				calc_atten = scene_lights[i]->color;
 			}
-
+			
 			// Shoot shadow ray from intersect point
 			float shadow_bias = .0001f;
-			glm::vec3 to_light_source = -glm::normalize(light_direction); // TODO verify? point and directional same?
-			ray r_inter_to_light(out_prim_int + shadow_bias*(glm::normalize(out_primitive_hit->get_normal(out_prim_int))), 
-								to_light_source);
+			glm::vec3 dir_to_light_source = -glm::normalize(light_direction); // TODO verify? point and directional same?
+			ray shadow_ray(out_prim_int + shadow_bias*(glm::normalize(out_primitive_hit->get_normal(out_prim_int))), 
+								dir_to_light_source);
 
-			is_visible = !(trace_ray_to_primitive(r_inter_to_light, scene_primitives, temp_t, temp_prim, temp_out_prim_int));
+			is_visible = !(trace_ray_to_primitive(shadow_ray, scene_primitives, temp_t, temp_prim, temp_out_prim_int));
 			// END SHADOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			
+
+
 			// Calculate color at pixel using lambert and phong
 			glm::vec3 L = -light_direction;
 
@@ -125,6 +119,6 @@ glm::vec3 raytracer::Lambert_Phong(const glm::vec3& direction,
 	float nDotH = dot(normal, halfvec);
 	glm::vec3 phong = myspecular * pow(std::max(nDotH, 0.0f), myshininess);
 
-	glm::vec3 retval = lambert;// +phong;
+	glm::vec3 retval = lambert + phong;
 	return retval;
 }

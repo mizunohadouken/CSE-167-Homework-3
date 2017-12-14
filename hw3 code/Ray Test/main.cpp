@@ -85,11 +85,13 @@ int main(int argc, char *argv[])
 	// TODO remove testing ground
 	// Print debugging area
 	// !!!!!!!!!!!!!!!!!!!!!!!!!
+	/*
 	printf("Look at vector:\n");
 	printvec3(scene.LookAt);
 	std::cout << scene.width << " " << scene.height << "\n";
 	std::cout << "Max Verts: " << scene.max_verts << "\n";
 	std::cout << "Number of vertices: " << scene.v_vertices.size() << "\n";
+	*/
 	std::cout << "Number of primitives: " << primitives.size() << "\n";
 	std::cout << "Number of lights: " << scene_lights.size() << "\n";
 	std::cout << "K-eps: " << k_eps << "\n";

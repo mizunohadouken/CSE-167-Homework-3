@@ -16,12 +16,12 @@ public:
 	light();
 	~light();
 
-	light(glm::vec4 dir_pos_con, glm::vec4 color_con, bool attenutation_con, glm::mat4 model_view);
+	light(glm::vec3 dir_pos_con, glm::vec3 color_con, bool attenutation_con);// , glm::mat4 model_view);
 
-	glm::vec4 dir_pos;
-	glm::vec4 color;
-	glm::vec4 transf_dir_pos;
-	glm::vec4 transf_color;
+	glm::vec3 dir_pos;
+	glm::vec3 color;
+//	glm::vec4 transf_dir_pos;
+//	glm::vec4 transf_color;
 	bool use_attenuation;
 private:
 

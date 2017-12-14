@@ -126,23 +126,25 @@ triangle::triangle(glm::vec3 &v0_con, glm::vec3 &v1_con, glm::vec3 &v2_con)
 	v2 = v2_con;
 
 //	tri_normal = glm::cross((v1 - v0), (v2 - v0));
-	N = glm::normalize(glm::cross((v1 - v0), (v2 - v0))); // TODO check if unit norm needed
+//	N = glm::normalize(glm::cross((v1 - v0), (v2 - v0))); // TODO check if unit norm needed
+	normal = glm::cross((v1 - v0), (v2 - v0));
 
 	prim_ambient = glm::vec3(.2f, .2f, .2f); // TODO default ambient
 }
 
 bool triangle::intersect(const ray ray_shot, float &out_t)
 {
+	
 	glm::vec3 v0v1 = v1 - v0;
 	glm::vec3 v0v2 = v2 - v0;
-	glm::vec3 N = glm::cross(v0v1, v0v2);
+	glm::vec3 Norm = glm::cross(v0v1, v0v2);
 	
-	float NdotRayDir = glm::dot(N, ray_shot.ray_dir);
+	float NdotRayDir = glm::dot(Norm, ray_shot.ray_dir);
 	if (fabs(NdotRayDir) < k_eps) // near zero
 	{	return false;	} // ray and plane are parallel
 
-	float d = glm::dot(N, v0);
-	float NdotOrg = glm::dot(N, ray_shot.ray_origin);
+	float d = glm::dot(Norm, v0);
+	float NdotOrg = glm::dot(Norm, ray_shot.ray_origin);
 
 	// compute t
 	out_t = (d - NdotOrg) / NdotRayDir; // TODO subtract?
@@ -152,26 +154,26 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 	glm::vec3 P_inter = ray_shot.ray_origin + out_t * ray_shot.ray_dir;
 
 	// Test whether hit point is in our out of triangle using Barycentric Coordinates
-	float area_tri_v012 = glm::length(N) / 2.0f; // TODO calc normal?
+	float area_tri_v012 = glm::length(Norm) / 2.0f; // TODO calc normal?
 
 	// Sub-triange V1 V2 P
 	glm::vec3 normal_sub_tri = glm::cross((v2 - v1), (P_inter - v1));
 	float area_tri_v1P2 = glm::length(normal_sub_tri) / 2.0f;
-	if (glm::dot(normal_sub_tri, N) < 0) return false;
+	if (glm::dot(normal_sub_tri, Norm) < 0) return false;
 
 	// Sub-triange V0 V1 P
 	normal_sub_tri = glm::cross((v1 - v0), (P_inter - v0));
 	float area_tri_v01P = glm::length(normal_sub_tri) / 2.0f;
-	if (glm::dot(normal_sub_tri, N) < 0) return false;
+	if (glm::dot(normal_sub_tri, Norm) < 0) return false;
 
 	// Sub-triange V2 V0 P
 	normal_sub_tri = glm::cross((v0 - v2), (P_inter - v2));
 	float area_tri_v20P = glm::length(normal_sub_tri) / 2.0f;
-	if (glm::dot(normal_sub_tri, N) < 0) return false;
+	if (glm::dot(normal_sub_tri, Norm) < 0) return false;
 
 	return true;
 
-	/*
+/*	
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// Triangle Intersect Code Below Fails for Some reason when casting shadow ray
 	glm::vec3 v0v1 = v1 - v0;
@@ -199,12 +201,8 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 
 glm::vec3 triangle::get_normal (glm::vec3 & intersect_point) const// TODO verify correct
 {
-	glm::vec4 obj_space_normal = glm::normalize(glm::vec4(N, 0.0f));
+	glm::vec4 obj_space_normal = glm::normalize(glm::vec4(normal, 0.0f));
 	glm::vec4 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
-//	float w_inv = 1 / world_space_normal.w;
-//	glm::vec3 dehom_normal = glm::vec3(world_space_normal.x * w_inv,
-//		world_space_normal.y * w_inv,
-//		world_space_normal.z * w_inv);
 	return glm::normalize(world_space_normal);  // TODO Need to normalize?
 }
 

@@ -8,12 +8,12 @@ light::~light()
 {
 }
 
-light::light(glm::vec4 dir_pos_con, glm::vec4 color_con, bool attenutation_con, glm::mat4 model_view)
+light::light(glm::vec3 dir_pos_con, glm::vec3 color_con, bool attenutation_con)// , glm::mat4 model_view)
 {
 	dir_pos = dir_pos_con;
 	color = color_con;
-	transf_dir_pos = model_view * dir_pos_con;
-	transf_dir_pos = model_view * color_con;
+//	transf_dir_pos = model_view * dir_pos_con;
+//	transf_dir_pos = model_view * color_con;
 	use_attenuation = attenutation_con;
 }
 
@@ -29,7 +29,7 @@ void scene::readfile(const char * filename)
 	{
 		std::stack <glm::mat4> transform_stack;
 		transform_stack.push(glm::mat4(1.0f)); // push identity matrix to top of stack
-		glm::mat4 modelview; // TODO Model-View Matrix
+//		glm::mat4 modelview; // TODO is this needed? Model-View Matrix 
 
 		getline(in, str);
 		while (in)
@@ -66,7 +66,7 @@ void scene::readfile(const char * filename)
 						UpVec = camera::upvector(UpVec, LookFrom);
 
 						fovy = values[9];
-						modelview = camera::lookAt(LookFrom, LookAt, UpVec);
+// TODO remove?			modelview = camera::lookAt(LookFrom, LookAt, UpVec);
 					}
 				}
 				else if (cmd == "size")
@@ -91,8 +91,8 @@ void scene::readfile(const char * filename)
 					{
 						light* temp_light = new light(glm::vec4(values[0], values[1], values[2], 0.f), // direction
 													  glm::vec4(values[3], values[4], values[5], 1.f), // color
-													  false,									  // false, directional lights do not use attenuation
-													  modelview);
+													  false);										   // false, directional lights do not use attenuation
+													//  modelview);
 						v_scene_lights.push_back(temp_light);
 					}
 				}
@@ -103,8 +103,8 @@ void scene::readfile(const char * filename)
 					{
 						light* temp_light = new light(glm::vec4(values[0], values[1], values[2], 1.f), // direction
 											    	  glm::vec4(values[3], values[4], values[5], 1.f), // color
-												  	  true,									  // true, point lights do use attenuation
-													  modelview);
+												  	  true);									  // true, point lights do use attenuation
+													//  modelview);
 						v_scene_lights.push_back(temp_light);
 					}
 				}

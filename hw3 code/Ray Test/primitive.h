@@ -52,6 +52,6 @@ public:
 	bool intersect(const ray ray_shot, float &out_t);
 	virtual glm::vec3 get_normal (glm::vec3& intersect_point) const;
 
-	glm::vec3 v0, v1, v2, N;
+	glm::vec3 v0, v1, v2, normal;
 private:
 };
