@@ -36,6 +36,7 @@ public:
 	std::string output_filename;
 	float width, height;
 	int max_verts;
+	int max_depth;
 
 	// camera variables
 	glm::vec3 LookFrom, LookAt, UpVec;

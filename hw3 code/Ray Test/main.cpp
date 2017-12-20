@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
 	std::cout << "Number of primitives: " << primitives.size() << "\n";
 	std::cout << "Number of lights: " << scene_lights.size() << "\n";
 	std::cout << "K-eps: " << k_eps << "\n";
+	std::cout << "Max Depth: " << scene.max_depth << "\n\n";
 
 	if (!scene_lights.empty())
 	{
@@ -123,7 +124,7 @@ int main(int argc, char *argv[])
 		for (int j = 0.f; j < Width;j++)
 		{
 			ray ray_through_pixel = camera::create_ray(LookFrom, LookAt, UpVec, fovy, Width, Height, i, j);
-			color_vec = raytracer::compute_pixel_color(ray_through_pixel, primitives, scene_lights, scene.attenuation);
+			color_vec = raytracer::compute_pixel_color(ray_through_pixel, primitives, scene_lights, scene.attenuation, scene.max_depth, 0);
 						
 			int slot = 3 * ((Height-i - 1)*Width + j); // starting at bottom left pixel
 //			int slot = 3 * ((Width*i)+j);  // start at top right

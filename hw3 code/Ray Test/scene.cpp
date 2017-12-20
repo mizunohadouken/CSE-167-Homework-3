@@ -82,6 +82,14 @@ void scene::readfile(const char * filename)
 				{
 					s >> output_filename;
 				}
+				else if (cmd == "maxdepth")
+				{
+					validinput = readvals(s, 1, values);
+					if (validinput)
+					{
+						max_depth = values[0];
+					}
+				}
 
 				// lights
 				else if (cmd == "directional")
@@ -288,6 +296,7 @@ void scene::matransform(std::stack<glm::mat4>& transfstack, float * values)
 scene::scene()
 {
 	attenuation = glm::vec3(1.f, 0.f, 0.f); // TODO check default attenuation (0.f, 0.f, 1.f) for point light?
+	max_depth = 5;
 }
 
 scene::~scene()

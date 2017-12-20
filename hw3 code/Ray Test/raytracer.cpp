@@ -8,7 +8,7 @@ raytracer::~raytracer()
 {
 }
 
-bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitive*> scene_primitives, float & out_tNear, const primitive *& out_primitive_hit, glm::vec3& out_prim_int)
+bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitive*>& scene_primitives, float & out_tNear, const primitive *& out_primitive_hit, glm::vec3& out_prim_int)
 {
 	out_tNear = INFINITY;
 
@@ -37,18 +37,26 @@ bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitiv
 	return (out_primitive_hit != nullptr);
 }
 
-glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primitive*>& scene_primitives, std::vector<light*>& scene_lights, glm::vec3& light_attenuation)
+glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primitive*>& scene_primitives, std::vector<light*>& scene_lights, glm::vec3& light_attenuation, int& max_depth, int depth)
 {
+	if(depth > max_depth)
+	{
+		glm::vec3 black = glm::vec3(0);
+		return black;
+	}
+
+	glm::vec3 hit_color;// = glm::vec3(0);
+	glm::vec3 refl_color;
 	glm::vec3 temp_vec;
 	glm::vec3 half_vec;
-	glm::vec3 light_sum = glm::vec3(0);
-	glm::vec3 hit_color = glm::vec3(0);
+	glm::vec3 diffuse_specular_sum = glm::vec3(0);
 	glm::vec3 out_prim_int;
 	glm::vec3 temp_out_prim_int;
 	const primitive *out_primitive_hit = nullptr;
 	const primitive *temp_prim = nullptr;
 	float out_t;  // hit scalar in ray equation;
 	float temp_t;
+	float bias = .0001f;
 
 	if (trace_ray_to_primitive(rayshot, scene_primitives, out_t, out_primitive_hit, out_prim_int)) // returns t intersection, nearest primitive hit, and vec3 intersect point
 	{
@@ -70,24 +78,17 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 				light_direction = -glm::normalize(scene_lights[i]->dir_pos); // TODO Positive or negative? Normalize?
 				calc_atten = scene_lights[i]->color;
 			}
-			
+	
 			// Shoot shadow ray from intersect point
-			float shadow_bias = .0001f;
-			glm::vec3 dir_to_light_source = -glm::normalize(light_direction); // TODO verify? point and directional same?
-			ray shadow_ray(out_prim_int + shadow_bias*(glm::normalize(out_primitive_hit->get_normal(out_prim_int))), 
-								dir_to_light_source);
+			is_visible = trace_shadow(light_direction, out_prim_int, out_primitive_hit, scene_primitives);
 
-			is_visible = !(trace_ray_to_primitive(shadow_ray, scene_primitives, temp_t, temp_prim, temp_out_prim_int));
-			// END SHADOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+			glm::vec3 L = -light_direction;
+			glm::vec3 hit_normal = glm::normalize(out_primitive_hit->get_normal(out_prim_int));
 
 			// Calculate color at pixel using lambert and phong
-			glm::vec3 L = -light_direction;
-
 			if (is_visible)
 			{
-				half_vec = glm::normalize(light_direction + glm::normalize(rayshot.ray_origin)); // TODO verify this is correct
-				glm::vec3 hit_normal = glm::normalize(out_primitive_hit->get_normal(out_prim_int));
+				half_vec = glm::normalize(L - glm::normalize(rayshot.ray_dir)); // TODO verify this is correct
 
 				glm::vec3 lamb_phong = Lambert_Phong(L,
 													 hit_normal,
@@ -95,11 +96,24 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 													 out_primitive_hit->prim_diffuse,
 													 out_primitive_hit->prim_specular,
 													 out_primitive_hit->prim_shininess);
-				light_sum = light_sum + calc_atten*lamb_phong;
+				diffuse_specular_sum = diffuse_specular_sum + calc_atten*lamb_phong;
 			}
-		}
 
-		glm::vec3 calc_color = out_primitive_hit->prim_ambient + out_primitive_hit->prim_emission + light_sum;
+			// CALCULATE SPECULAR
+//			ray refl_ray = reflect_ray(rayshot, hit_normal, out_prim_int);
+			glm::vec3 refl_ray_dir = rayshot.ray_dir - 2.0f * glm::dot(rayshot.ray_dir, hit_normal) * hit_normal;
+			glm::vec3 refl_ray_dir_norm = glm::normalize(refl_ray_dir);
+			ray refl_ray = ray(out_prim_int + bias*hit_normal, refl_ray_dir_norm);
+			refl_color = compute_pixel_color(refl_ray, scene_primitives, scene_lights, light_attenuation, max_depth, depth+1);
+		}
+		
+		glm::vec3 calc_color = out_primitive_hit->prim_ambient
+								+ out_primitive_hit->prim_emission
+								+ diffuse_specular_sum
+								+ (out_primitive_hit->prim_specular)*(refl_color);
+
+
+
 		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.b))); // clamp between 0 and 1
 		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.g)));
 		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.r)));
@@ -108,6 +122,15 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 	return hit_color;
 }
 
+ray raytracer::reflect_ray(const ray& incident_ray, glm::vec3& surface_normal, glm::vec3& hit_point)
+{
+	float shadow_bias = .0001f;
+	glm::vec3 int_to_eye = -incident_ray.ray_dir;
+	glm::vec3 refl_dir = (2.0f * (glm::dot(int_to_eye, surface_normal)) * surface_normal) - int_to_eye; // TODO verify signs are correct
+	refl_dir = glm::normalize(refl_dir);
+	return ray(hit_point + shadow_bias*refl_dir,
+			   refl_dir);
+}
 
 glm::vec3 raytracer::Lambert_Phong(const glm::vec3& direction,
 					   const glm::vec3& normal, const glm::vec3& halfvec,
@@ -121,4 +144,19 @@ glm::vec3 raytracer::Lambert_Phong(const glm::vec3& direction,
 
 	glm::vec3 retval = lambert + phong;
 	return retval;
+}
+
+bool raytracer::trace_shadow(glm::vec3 light_dir, glm::vec3 prim_intersect, const primitive *& prim_hit, std::vector<primitive*>& scene_primitives)
+{
+	glm::vec3 temp_out_prim_int;
+	const primitive *temp_prim = nullptr;
+	float temp_t;
+	bool is_visible;
+	
+	float shadow_bias = .0001f;
+	glm::vec3 dir_to_light_source = -glm::normalize(light_dir); // TODO verify? point and directional same?
+	ray shadow_ray(prim_intersect + shadow_bias * dir_to_light_source, // + shadow_bias*(glm::normalize(prim_hit->get_normal(prim_intersect))), // origin of ray at intersect point of primitive with light offset
+					dir_to_light_source);																// direction of ray, towards light
+
+	return is_visible = !(trace_ray_to_primitive(shadow_ray, scene_primitives, temp_t, temp_prim, temp_out_prim_int));
 }
