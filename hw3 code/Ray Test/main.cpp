@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
 	// pixel array to input to FreeImage
 	BYTE *pixel_array = new BYTE[3*Width*Height];
 	glm::vec3 color_vec;
+	glm::vec3 hit_color; // TODO need? remove?
 	int temp;
 	for (int i = 0.f; i < Height; i++)
 	{
@@ -128,10 +129,22 @@ int main(int argc, char *argv[])
 						
 			int slot = 3 * ((Height-i - 1)*Width + j); // starting at bottom left pixel
 //			int slot = 3 * ((Width*i)+j);  // start at top right
+//////////////////////////////
+	hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, color_vec.r))); // clamp between 0 and 1
+	hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, color_vec.g)));
+	hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, color_vec.b)));
 
-			*(pixel_array + 0 + slot) = color_vec[0];
+	*(pixel_array + 0 + slot) = hit_color[2];
+	*(pixel_array + 1 + slot) = hit_color[1];
+	*(pixel_array + 2 + slot) = hit_color[0];
+	/////////////////////////////////
+
+	/*
+			*(pixel_array + 0 + slot) = color_vec[2];
 			*(pixel_array + 1 + slot) = color_vec[1];
-			*(pixel_array + 2 + slot) = color_vec[2];
+			*(pixel_array + 2 + slot) = color_vec[0];
+
+			*/
 		}
 		temp = i;
 		int counter = temp % 50;

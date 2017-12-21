@@ -39,14 +39,11 @@ bool raytracer::trace_ray_to_primitive(const ray & rayshot, std::vector<primitiv
 
 glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primitive*>& scene_primitives, std::vector<light*>& scene_lights, glm::vec3& light_attenuation, int& max_depth, int depth)
 {
-	if(depth > max_depth)
-	{
-		glm::vec3 black = glm::vec3(0);
-		return black;
-	}
+
 
 	glm::vec3 hit_color;// = glm::vec3(0);
-	glm::vec3 refl_color;
+	glm::vec3 refl_color = glm::vec3(0);
+	glm::vec3 calc_color = glm::vec3(0);
 	glm::vec3 temp_vec;
 	glm::vec3 half_vec;
 	glm::vec3 diffuse_specular_sum = glm::vec3(0);
@@ -100,26 +97,50 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 			}
 
 			// CALCULATE SPECULAR
-//			ray refl_ray = reflect_ray(rayshot, hit_normal, out_prim_int);
-			glm::vec3 refl_ray_dir = rayshot.ray_dir - 2.0f * glm::dot(rayshot.ray_dir, hit_normal) * hit_normal;
-			glm::vec3 refl_ray_dir_norm = glm::normalize(refl_ray_dir);
-			ray refl_ray = ray(out_prim_int + bias*hit_normal, refl_ray_dir_norm);
-			refl_color = compute_pixel_color(refl_ray, scene_primitives, scene_lights, light_attenuation, max_depth, depth+1);
+			if (depth < max_depth)
+			{
+			//ray refl_ray = reflect_ray(rayshot, hit_normal, out_prim_int);
+				
+//				glm::vec3 refl_ray_dir = rayshot.ray_dir - 2.0f * glm::dot(rayshot.ray_dir, hit_normal) * hit_normal;
+				glm::vec3 refl_ray_dir = glm::normalize(rayshot.ray_dir) - 2.0f * glm::dot(glm::normalize(rayshot.ray_dir), hit_normal) * hit_normal;
+
+				glm::vec3 refl_ray_dir_norm = glm::normalize(refl_ray_dir);
+				ray refl_ray = ray(out_prim_int  + bias*refl_ray_dir_norm , refl_ray_dir_norm);
+				glm::vec3 refl_color = (out_primitive_hit->prim_specular)*(compute_pixel_color(refl_ray, scene_primitives, scene_lights, light_attenuation, max_depth, depth + 1));
+				calc_color = calc_color + refl_color;
+				
+	/*			glm::vec3 to_eye = rayshot.ray_origin - out_prim_int;
+				glm::vec3 refl_ray_dir = glm::normalize((2.f * glm::dot(to_eye, hit_normal)*hit_normal) - to_eye);
+				glm::vec3 oldSpecular = out_primitive_hit->prim_specular;
+				ray refl_ray = ray(out_prim_int+bias*refl_ray_dir, refl_ray_dir);
+
+				refl_color = refl_color + (oldSpecular)*(compute_pixel_color(refl_ray, scene_primitives, scene_lights, light_attenuation, max_depth, depth + 1));
+	*/
+			}
+	/*		else
+			{
+				glm::vec3 black = glm::vec3(0);
+				return black;
+			}
+			*/
 		}
 		
-		glm::vec3 calc_color = out_primitive_hit->prim_ambient
+	/*	glm::vec3*/ calc_color = out_primitive_hit->prim_ambient
 								+ out_primitive_hit->prim_emission
 								+ diffuse_specular_sum
-								+ (out_primitive_hit->prim_specular)*(refl_color);
+								+ calc_color;
+								//+ (out_primitive_hit->prim_specular)*(refl_color);
+				//				+ refl_color;
 
 
 
-		hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.b))); // clamp between 0 and 1
-		hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.g)));
-		hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.r)));
+	//	hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.r))); // clamp between 0 and 1
+	//	hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.g)));
+	//	hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, calc_color.b)));
 	}
 
-	return hit_color;
+//	return hit_color;
+	return calc_color;
 }
 
 ray raytracer::reflect_ray(const ray& incident_ray, glm::vec3& surface_normal, glm::vec3& hit_point)
