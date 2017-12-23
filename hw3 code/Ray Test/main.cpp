@@ -81,7 +81,6 @@ int main(int argc, char *argv[])
 
 
 
-
 	// TODO remove testing ground
 	// Print debugging area
 	// !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -99,14 +98,20 @@ int main(int argc, char *argv[])
 
 	if (!scene_lights.empty())
 	{
-		printf("Light Dir Vec\n");
+		printf("First light dir Vec\n");
+		printvec3(scene_lights.front()->dir_pos);
+		printf("First light color Vec\n");
+		printvec3(scene_lights.front()->color);
+		std::cout << "Use attenuation for first light? = " << scene_lights.front()->use_attenuation << "\n";
+		printf("Last light dir Vec\n");
 		printvec3(scene_lights.back()->dir_pos);
-		printf("Light Color Vec\n");
+		printf("Last light color Vec\n");
 		printvec3(scene_lights.back()->color);
-		std::cout << "Use attenuation? = " << scene_lights.back()->use_attenuation << "\n";
+		std::cout << "Use attenuation for last light? = " << scene_lights.back()->use_attenuation << "\n";
 		printf("Attenuation\n");
+		printvec3(scene.attenuation);
 	}
-	printvec3(scene.attenuation);
+
 
 	std::cout << "Primitive ambient\n";
 	printvec3(primitives.back()->prim_ambient);
@@ -118,7 +123,6 @@ int main(int argc, char *argv[])
 	// pixel array to input to FreeImage
 	BYTE *pixel_array = new BYTE[3*Width*Height];
 	glm::vec3 color_vec;
-	glm::vec3 hit_color; // TODO need? remove?
 	int temp;
 	for (int i = 0.f; i < Height; i++)
 	{
@@ -129,22 +133,11 @@ int main(int argc, char *argv[])
 						
 			int slot = 3 * ((Height-i - 1)*Width + j); // starting at bottom left pixel
 //			int slot = 3 * ((Width*i)+j);  // start at top right
-//////////////////////////////
-	hit_color[0] = 255 * (std::max(0.0f, std::min(1.0f, color_vec.r))); // clamp between 0 and 1
-	hit_color[1] = 255 * (std::max(0.0f, std::min(1.0f, color_vec.g)));
-	hit_color[2] = 255 * (std::max(0.0f, std::min(1.0f, color_vec.b)));
 
-	*(pixel_array + 0 + slot) = hit_color[2];
-	*(pixel_array + 1 + slot) = hit_color[1];
-	*(pixel_array + 2 + slot) = hit_color[0];
-	/////////////////////////////////
-
-	/*
-			*(pixel_array + 0 + slot) = color_vec[2];
-			*(pixel_array + 1 + slot) = color_vec[1];
-			*(pixel_array + 2 + slot) = color_vec[0];
-
-			*/
+			// insert computed color into array for image
+			*(pixel_array + 2 + slot) = 255 * (std::max(0.0f, std::min(1.0f, color_vec.r))); // clamp between 0 and 1
+			*(pixel_array + 1 + slot) = 255 * (std::max(0.0f, std::min(1.0f, color_vec.g)));
+			*(pixel_array + 0 + slot) = 255 * (std::max(0.0f, std::min(1.0f, color_vec.b)));
 		}
 		temp = i;
 		int counter = temp % 50;

@@ -17,8 +17,9 @@ public:
 	static glm::vec3 compute_pixel_color(const ray& rayshot, std::vector<primitive*>& scene_primitives, std::vector<light*>& scene_lights, glm::vec3& light_attenuation, int& max_depth, int depth);
 	static ray reflect_ray(const ray& incident_ray, glm::vec3& surface_normal, glm::vec3& hit_point);
 	static glm::vec3 Lambert_Phong(const glm::vec3 & direction, const glm::vec3 & normal, const glm::vec3 & halfvec, const glm::vec3 & mydiffuse, const glm::vec3 & myspecular, const float myshininess);
-//	glm::vec3 shader_equations();
-	static bool trace_shadow(glm::vec3 light_dir, glm::vec3 prim_intersect, const primitive *& prim_hit, std::vector<primitive*>& scene_primitives);
+	static bool trace_shadow(glm::vec3 light_dir, glm::vec3 prim_intersect, const primitive *& prim_hit, std::vector<primitive*>& scene_primitives, float& dist_to_light);
+
+	static bool check_blocking_light(ray & shadow_ray, std::vector<primitive*>& scene_primitives, float & dist_to_light);
 
 private:
 

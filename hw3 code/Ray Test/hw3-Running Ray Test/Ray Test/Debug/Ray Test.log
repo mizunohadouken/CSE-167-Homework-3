@@ -1,0 +1,11 @@
+﻿  RayTracer.cpp
+c:\users\andrew\desktop\othe hw\read\yaffykoyo - computer_graphics_cse167x-master\hw3-running ray test\ray test\object.h(32): warning C4244: 'return': conversion from 'float' to 'BYTE', possible loss of data
+c:\users\andrew\desktop\othe hw\read\yaffykoyo - computer_graphics_cse167x-master\hw3-running ray test\ray test\object.h(33): warning C4244: 'return': conversion from 'float' to 'BYTE', possible loss of data
+c:\users\andrew\desktop\othe hw\read\yaffykoyo - computer_graphics_cse167x-master\hw3-running ray test\ray test\object.h(34): warning C4244: 'return': conversion from 'float' to 'BYTE', possible loss of data
+c:\users\andrew\desktop\othe hw\read\yaffykoyo - computer_graphics_cse167x-master\hw3-running ray test\ray test\raytracer.cpp(18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\andrew\desktop\othe hw\read\yaffykoyo - computer_graphics_cse167x-master\hw3-running ray test\ray test\raytracer.cpp(19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\andrew\desktop\othe hw\read\yaffykoyo - computer_graphics_cse167x-master\hw3-running ray test\ray test\raytracer.cpp(20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\andrew\desktop\othe hw\read\yaffykoyo - computer_graphics_cse167x-master\hw3-running ray test\ray test\raytracer.cpp(21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\andrew\desktop\othe hw\read\yaffykoyo - computer_graphics_cse167x-master\hw3-running ray test\ray test\raytracer.cpp(37): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\andrew\desktop\othe hw\read\yaffykoyo - computer_graphics_cse167x-master\hw3-running ray test\ray test\raytracer.cpp(141): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+  Ray Test.vcxproj -> C:\Users\Andrew\Desktop\Othe HW\Read\YaffyKoyo - Computer_Graphics_CSE167x-master\hw3-Running Ray Test\Debug\Ray Test.exe
