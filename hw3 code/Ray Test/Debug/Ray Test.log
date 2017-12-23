@@ -1,6 +1,4 @@
 ﻿  raytracer.cpp
 c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\primitive.h(8): warning C4305: 'initializing': truncation from 'double' to 'float'
 c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\raytracer.cpp(58): warning C4018: '<': signed/unsigned mismatch
-c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\raytracer.cpp(152): warning C4101: 'temp_t': unreferenced local variable
-c:\users\andrew\desktop\courses\cse167\homework 3\hw3 code\ray test\raytracer.cpp(153): warning C4101: 'is_visible': unreferenced local variable
   Ray Test.vcxproj -> C:\Users\Andrew\Desktop\Courses\CSE167\Homework 3\hw3 code\Debug\Ray Test.exe

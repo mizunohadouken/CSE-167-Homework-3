@@ -63,27 +63,48 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 
 			if (((scene_lights[i]->use_attenuation)) == 1) // if true, point light
 			{
-//				light_direction = glm::normalize(out_prim_int - scene_lights[i]->dir_pos); // TODO check order of subtraction
 				light_direction = out_prim_int - scene_lights[i]->dir_pos; // TODO check order of subtraction
 
 				float r = glm::length(light_direction);
 				dist_to_light = r;
 
 				calc_atten = (scene_lights[i]->color) / (light_attenuation.x + (light_attenuation.y)*r + (light_attenuation.z)*r*r); // TODO verify correct
+				light_direction = glm::normalize(light_direction);
+
+				// Shoot shadow ray from intersect point
+				is_visible = trace_shadow(light_direction, out_prim_int, out_primitive_hit, scene_primitives, dist_to_light);
 			}
 			else if ((scene_lights[i]->use_attenuation) == 0) // if false, directional light, no attenuation
 			{
-//				light_direction = -glm::normalize(scene_lights[i]->dir_pos); // TODO Positive or negative? Normalize?
 				light_direction = -scene_lights[i]->dir_pos; // TODO Positive or negative? Normalize?
 
 				calc_atten = scene_lights[i]->color;
 
 				dist_to_light = INFINITY; // directional lights are placed in an infinite distance away
-			}
-			light_direction = glm::normalize(light_direction);
+				light_direction = glm::normalize(light_direction);
 
-			// Shoot shadow ray from intersect point
-			is_visible = trace_shadow(light_direction, out_prim_int, out_primitive_hit, scene_primitives, dist_to_light);
+//				// Shoot shadow ray from intersect point
+//				is_visible = trace_shadow(light_direction, out_prim_int, out_primitive_hit, scene_primitives, dist_to_light);
+/////////////////////////
+				/////////////////
+				/////////////////
+				float shadow_bias = .001f;
+				float temp_t;
+				const primitive *temp_prim = nullptr;
+				glm::vec3 temp_int_vec;
+
+
+				glm::vec3 dir_to_light_source = -light_direction;
+				ray shadow_ray(out_prim_int + shadow_bias * dir_to_light_source,
+					dir_to_light_source);															
+
+				is_visible = !(trace_ray_to_primitive(shadow_ray, scene_primitives, temp_t, temp_prim, temp_int_vec));
+
+
+
+				//////////////////////
+				//////////////////////
+			}
 
 			glm::vec3 L = -light_direction;
 			glm::vec3 hit_normal = out_primitive_hit->get_normal(out_prim_int);
@@ -147,13 +168,8 @@ glm::vec3 raytracer::Lambert_Phong(const glm::vec3& direction,
 
 bool raytracer::trace_shadow(glm::vec3 light_dir, glm::vec3 prim_intersect, const primitive *& prim_hit, std::vector<primitive*>& scene_primitives, float& dist_to_light)
 {
-	glm::vec3 temp_out_prim_int;
-	const primitive *temp_prim = nullptr;
-	float temp_t;
-	bool is_visible;
-	
 	float shadow_bias = .0001f;
-	glm::vec3 dir_to_light_source = -glm::normalize(light_dir); // TODO verify? point and directional same?
+	glm::vec3 dir_to_light_source = -light_dir; // TODO verify? point and directional same?
 	ray shadow_ray(prim_intersect + shadow_bias * dir_to_light_source, // + shadow_bias*(glm::normalize(prim_hit->get_normal(prim_intersect))), // origin of ray at intersect point of primitive with light offset
 					dir_to_light_source);																// direction of ray, towards light
 
