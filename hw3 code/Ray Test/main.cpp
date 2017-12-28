@@ -84,9 +84,9 @@ int main(int argc, char *argv[])
 	// TODO remove testing ground
 	// Print debugging area
 	// !!!!!!!!!!!!!!!!!!!!!!!!!
-	/*
+
 	printf("Look at vector:\n");
-	printvec3(scene.LookAt);
+	printvec3(scene.LookAt);/*
 	std::cout << scene.width << " " << scene.height << "\n";
 	std::cout << "Max Verts: " << scene.max_verts << "\n";
 	std::cout << "Number of vertices: " << scene.v_vertices.size() << "\n";
@@ -112,9 +112,16 @@ int main(int argc, char *argv[])
 		printvec3(scene.attenuation);
 	}
 
-
-	std::cout << "Primitive ambient\n";
+	std::cout << "Last Primitive ambient\n";
 	printvec3(primitives.back()->prim_ambient);
+	std::cout << "Last Primitive specular\n";
+	printvec3(primitives.back()->prim_specular);
+	std::cout << "Last Primitive diffuse\n";
+	printvec3(primitives.back()->prim_diffuse);
+	std::cout << "Last Primitive emission\n";
+	printvec3(primitives.back()->prim_emission);
+	std::cout << "Last Primitive shiness: " << primitives.back()->prim_shininess << "\n";
+	
 
 
 	// !!!!!!!!!!!!!
@@ -140,7 +147,7 @@ int main(int argc, char *argv[])
 			*(pixel_array + 0 + slot) = 255 * (std::max(0.0f, std::min(1.0f, color_vec.b)));
 		}
 		temp = i;
-		int counter = temp % 50;
+		int counter = temp %40;
 		if (counter == 0) std::cout << "Tracing pixel row: " << i << "\n";
 	}
 	

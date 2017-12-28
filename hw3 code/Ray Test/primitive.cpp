@@ -63,6 +63,59 @@ sphere::sphere(const glm::vec3 &center_con, const float &radius_con)
 
 bool sphere::intersect(const ray ray_shot, float & out_t)
 {
+	/*
+	float a = glm::dot(ray_shot.ray_dir, ray_shot.ray_dir),
+		b = 2 * (glm::dot(ray_shot.ray_dir, (ray_shot.ray_origin - center))),
+		c = (glm::dot((ray_shot.ray_origin - center), (ray_shot.ray_origin - center))) - radius_sq,
+		out_t0,
+		out_t1;
+
+	float discriminant = (b * b) - (4 * a *c);
+	float sqrt_dis = sqrt(discriminant);
+
+	if (discriminant < 0) // no real roots
+	{
+		return false;
+	}
+
+	out_t0 = (-b + sqrt_dis) / (2 * a);
+	out_t1 = (-b - sqrt_dis) / (2 * a);
+
+	if ((out_t0 < 0)  && (out_t1 < 0)) // if both roots are negative, they are behind camera
+	{
+		return false;
+	}
+
+	if ((out_t0 >= 0) && out_t1 >= 0) // if both are real, non-neg, pick smallest value
+	{
+		if (out_t0 < out_t1)
+		{
+			out_t = out_t0;
+		}
+		else if (out_t1 < out_t0)
+		{
+			out_t = out_t1;
+		}
+		else
+		{
+			out_t = out_t0;
+		}
+	}
+	else if (((out_t0 >= 0) && (out_t1 < 0)) || ((out_t0 < 0) && (out_t1 >= 0)))
+	{
+		if (out_t0 > out_t1)
+		{
+			out_t = out_t0;
+		}
+		else
+		{
+			out_t = out_t1;
+		}
+	}
+	return true;
+	*/
+
+	
 	float a = glm::dot(ray_shot.ray_dir, ray_shot.ray_dir),
 		b = 2 * (glm::dot(ray_shot.ray_dir, (ray_shot.ray_origin - center))),
 		c = (glm::dot((ray_shot.ray_origin - center), (ray_shot.ray_origin - center))) - radius_sq,
@@ -79,6 +132,7 @@ bool sphere::intersect(const ray ray_shot, float & out_t)
 	}
 	out_t = out_t0;
 	return true;
+	
 }
 
 bool sphere::solve_quadratic(const float & a, const float & b, const float & c, float & out_x0, float & out_x1)
@@ -139,9 +193,15 @@ bool triangle::intersect(const ray ray_shot, float &out_t)
 	glm::vec3 v0v2 = v2 - v0;
 	glm::vec3 Norm = glm::cross(v0v1, v0v2);
 	
+	
 	float NdotRayDir = glm::dot(Norm, ray_shot.ray_dir);
+	if (NdotRayDir == 0) { return false; }
+
+	/*
 	if (fabs(NdotRayDir) < k_eps) // near zero
 	{	return false;	} // ray and plane are parallel
+	*/
+
 
 	float d = glm::dot(Norm, v0);
 	float NdotOrg = glm::dot(Norm, ray_shot.ray_origin);

@@ -63,7 +63,7 @@ void scene::readfile(const char * filename)
 						UpVec[1] = values[7];
 						UpVec[2] = values[8];
 
-						UpVec = camera::upvector(UpVec, LookFrom);
+// TODO					UpVec = camera::upvector(UpVec, LookFrom);
 
 						fovy = values[9];
 // TODO remove?			modelview = camera::lookAt(LookFrom, LookAt, UpVec);

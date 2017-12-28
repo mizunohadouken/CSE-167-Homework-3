@@ -3,7 +3,7 @@ size 640 480
 camera 0 0 0 0 0 -1 0 1 0 45
 output scene511.png
 
-maxdepth 5
+#maxdepth 5
 
 point 0 20 -40 1 1 1
 directional 0.5 0.5 -0.5 0 0.3 0
@@ -13,8 +13,8 @@ diffuse 0.4 0.4 0.4
 shininess 40
 emission 0 0 0
 
-pushTransform
-translate 0 -2 -5
+#pushTransform
+#translate 0 -2 -5
 
 
 

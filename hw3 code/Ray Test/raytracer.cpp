@@ -84,11 +84,11 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 				light_direction = glm::normalize(light_direction);
 
 //				// Shoot shadow ray from intersect point
-//				is_visible = trace_shadow(light_direction, out_prim_int, out_primitive_hit, scene_primitives, dist_to_light);
+				is_visible = trace_shadow(light_direction, out_prim_int, out_primitive_hit, scene_primitives, dist_to_light);
 /////////////////////////
 				/////////////////
 				/////////////////
-				float shadow_bias = .001f;
+	/*			float shadow_bias = .001f;
 				float temp_t;
 				const primitive *temp_prim = nullptr;
 				glm::vec3 temp_int_vec;
@@ -100,14 +100,14 @@ glm::vec3 raytracer::compute_pixel_color(const ray& rayshot, std::vector<primiti
 
 				is_visible = !(trace_ray_to_primitive(shadow_ray, scene_primitives, temp_t, temp_prim, temp_int_vec));
 
-
+*/
 
 				//////////////////////
 				//////////////////////
 			}
 
 			glm::vec3 L = -light_direction;
-			glm::vec3 hit_normal = out_primitive_hit->get_normal(out_prim_int);
+			glm::vec3 hit_normal = glm::normalize(out_primitive_hit->get_normal(out_prim_int));
 
 			// Calculate color at pixel using lambert and phong
 			if (is_visible)

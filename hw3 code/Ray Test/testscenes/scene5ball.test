@@ -1,0 +1,26 @@
+#Thousand Spheres
+size 640 480
+output scene5ball.png
+
+#camera 0 0 0 0 0 -1 0 1 0 45
+#camera 0 -4 4 0 -1 0 0 1 1 45
+#camera 0 0 4 0 0 -1 0 1 0 45
+camera 0 0 0 0 0 -1 0 1 0 45
+
+maxdepth 5
+
+point 0 20 -40 1 1 1
+directional 0.5 0.5 -0.5 0 0.3 0
+ambient 0.01 0.01 0.01
+specular 0.4 0.4 0.4
+diffuse 0.4 0.4 0.4
+shininess 40
+emission 0 0 0
+
+pushTransform
+translate 0 -2 -5
+
+
+pushTransform
+translate 0 0 0
+sphere 0 0 0 0.4

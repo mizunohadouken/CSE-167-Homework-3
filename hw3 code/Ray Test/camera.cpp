@@ -100,12 +100,16 @@ glm::vec3 camera::upvector(const glm::vec3 &up, const glm::vec3 & zvec)
 
 ray camera::create_ray(glm::vec3 eye, glm::vec3 center, glm::vec3 up, float fovy, int width, int height, int i_pixel, int j_pixel)
 {
-	glm::mat4 coor_frame = camera::make_coordinate_frame(eye, center, up);
+/*	glm::mat4 coor_frame = camera::make_coordinate_frame(eye, center, up);
 
 	// define vectors u, v, w
 	glm::vec3 u = glm::vec3(coor_frame[0][0], coor_frame[1][0], coor_frame[2][0]);
 	glm::vec3 v = glm::vec3(coor_frame[0][1], coor_frame[1][1], coor_frame[2][1]);
 	glm::vec3 w = glm::vec3(coor_frame[0][2], coor_frame[1][2], coor_frame[2][2]);
+	*/
+	glm::vec3 w = glm::normalize(eye - center);
+	glm::vec3 u = glm::normalize(glm::cross(up, w));
+	glm::vec3 v = glm::cross(w, u);
 
 	fovy = fovy*M_PI / 180.0f;  // Convert degrees to rads
 
