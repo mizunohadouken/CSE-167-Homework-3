@@ -74,7 +74,7 @@ glm::mat4 camera::scale(const float &sx, const float &sy, const float &sz)
 
 glm::mat4 camera::translate(const float &tx, const float &ty, const float &tz)
 {
-	glm::mat4 ret = glm::mat4(1);
+	glm::mat4 ret = glm::mat4(1.f);
 
 	// Implement translation 
 	ret[3][0] = tx;

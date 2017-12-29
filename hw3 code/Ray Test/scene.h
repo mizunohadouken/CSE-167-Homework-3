@@ -51,8 +51,11 @@ public:
 	float shininess;
 
 	// geometry/primitives
-	std::vector<primitive*> v_primitives;
+	std::vector<std::unique_ptr<primitive>> v_primitives;
 	std::vector<glm::vec3> v_vertices;
+
+	// constants
+	float bias = .01f; // TODO adjustable bias for shadows/rays surface
 
 	// methods
 	void readfile(const char* filename);

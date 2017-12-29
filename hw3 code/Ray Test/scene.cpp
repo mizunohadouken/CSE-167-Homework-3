@@ -97,8 +97,8 @@ void scene::readfile(const char * filename)
 					validinput = readvals(s, 6, values);
 					if (validinput)
 					{
-						light* temp_light = new light(glm::vec4(values[0], values[1], values[2], 0.f), // direction
-													  glm::vec4(values[3], values[4], values[5], 1.f), // color
+						light* temp_light = new light(glm::vec3(values[0], values[1], values[2]), // direction
+													  glm::vec3(values[3], values[4], values[5]), // color
 													  false);										   // false, directional lights do not use attenuation
 													//  modelview);
 						v_scene_lights.push_back(temp_light);
@@ -109,8 +109,8 @@ void scene::readfile(const char * filename)
 					validinput = readvals(s, 6, values);
 					if (validinput)
 					{
-						light* temp_light = new light(glm::vec4(values[0], values[1], values[2], 1.f), // direction
-											    	  glm::vec4(values[3], values[4], values[5], 1.f), // color
+						light* temp_light = new light(glm::vec3(values[0], values[1], values[2]), // direction
+											    	  glm::vec3(values[3], values[4], values[5]), // color
 												  	  true);									  // true, point lights do use attenuation
 													//  modelview);
 						v_scene_lights.push_back(temp_light);
@@ -168,9 +168,9 @@ void scene::readfile(const char * filename)
 					validinput = readvals(s, 3, values);
 					if (validinput)
 					{
-						v_primitives.push_back(new triangle(v_vertices[values[0]],
-															v_vertices[values[1]],
-															v_vertices[values[2]]));
+						v_primitives.push_back(std::unique_ptr<primitive> (new triangle(v_vertices[values[0]],
+																						v_vertices[values[1]],
+																						v_vertices[values[2]])));
 						// assign material properties
 						v_primitives.back()->prim_diffuse = diffuse;
 						v_primitives.back()->prim_specular = specular;
@@ -186,9 +186,8 @@ void scene::readfile(const char * filename)
 					validinput = readvals(s, 4, values);
 					if (validinput)
 					{
-						v_primitives.push_back(new sphere(glm::vec3(values[0], values[1], values[2]), // center
-																	values[3]) // radius
-																	);
+						v_primitives.push_back(std::unique_ptr<primitive> (new sphere(glm::vec3(values[0], values[1], values[2]), // center
+																														values[3]))); // radius
 						// assign material properties
 						v_primitives.back()->prim_diffuse = diffuse;
 						v_primitives.back()->prim_specular = specular;

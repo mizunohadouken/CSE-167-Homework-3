@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 	glm::vec3 UpVec = scene.UpVec;
 	float fovy = scene.fovy;
 	// Scene primitives
-	std::vector<primitive*> primitives = scene.v_primitives;
+//	std::vector<std::unique_ptr<primitive>> primitives = scene.v_primitives;
 	// Scene lights
 	std::vector<light*> scene_lights = scene.v_scene_lights;
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 	std::cout << "Max Verts: " << scene.max_verts << "\n";
 	std::cout << "Number of vertices: " << scene.v_vertices.size() << "\n";
 	*/
-	std::cout << "Number of primitives: " << primitives.size() << "\n";
+	std::cout << "Number of primitives: " << scene.v_primitives.size() << "\n";
 	std::cout << "Number of lights: " << scene_lights.size() << "\n";
 	std::cout << "K-eps: " << k_eps << "\n";
 	std::cout << "Max Depth: " << scene.max_depth << "\n\n";
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 		printf("Attenuation\n");
 		printvec3(scene.attenuation);
 	}
-
+	/*
 	std::cout << "Last Primitive ambient\n";
 	printvec3(primitives.back()->prim_ambient);
 	std::cout << "Last Primitive specular\n";
@@ -121,11 +121,12 @@ int main(int argc, char *argv[])
 	std::cout << "Last Primitive emission\n";
 	printvec3(primitives.back()->prim_emission);
 	std::cout << "Last Primitive shiness: " << primitives.back()->prim_shininess << "\n";
+	*/
+
 	
-
-
 	// !!!!!!!!!!!!!
 	// !!!!!!!!!!!!!
+
 
 	// pixel array to input to FreeImage
 	BYTE *pixel_array = new BYTE[3*Width*Height];
@@ -136,15 +137,16 @@ int main(int argc, char *argv[])
 		for (int j = 0.f; j < Width;j++)
 		{
 			ray ray_through_pixel = camera::create_ray(LookFrom, LookAt, UpVec, fovy, Width, Height, i, j);
-			color_vec = raytracer::compute_pixel_color(ray_through_pixel, primitives, scene_lights, scene.attenuation, scene.max_depth, 0);
-						
+			color_vec = raytracer::compute_pixel_color(ray_through_pixel, scene.v_primitives, scene_lights, scene, 0);
+
+
 			int slot = 3 * ((Height-i - 1)*Width + j); // starting at bottom left pixel
 //			int slot = 3 * ((Width*i)+j);  // start at top right
 
 			// insert computed color into array for image
-			*(pixel_array + 2 + slot) = 255 * (std::max(0.0f, std::min(1.0f, color_vec.r))); // clamp between 0 and 1
-			*(pixel_array + 1 + slot) = 255 * (std::max(0.0f, std::min(1.0f, color_vec.g)));
-			*(pixel_array + 0 + slot) = 255 * (std::max(0.0f, std::min(1.0f, color_vec.b)));
+			*(pixel_array + 2 + slot) = 255.f * (std::max(0.0f, std::min(1.0f, color_vec.r))); // clamp between 0 and 1
+			*(pixel_array + 1 + slot) = 255.f * (std::max(0.0f, std::min(1.0f, color_vec.g)));
+			*(pixel_array + 0 + slot) = 255.f * (std::max(0.0f, std::min(1.0f, color_vec.b)));
 		}
 		temp = i;
 		int counter = temp %40;
@@ -159,5 +161,7 @@ int main(int argc, char *argv[])
 	std::cout << "Ray Tracing Complete" << "\n";
 	std::cout << "\n********************" << "\n";
 	FreeImage_DeInitialise();
+
+	
 	system("Pause");
 }
