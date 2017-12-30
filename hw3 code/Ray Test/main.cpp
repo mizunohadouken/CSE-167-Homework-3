@@ -142,11 +142,16 @@ int main(int argc, char *argv[])
 
 			int slot = 3 * ((Height-i - 1)*Width + j); // starting at bottom left pixel
 //			int slot = 3 * ((Width*i)+j);  // start at top right
-
+/*
 			// insert computed color into array for image
 			*(pixel_array + 2 + slot) = 255.f * (std::max(0.0f, std::min(1.0f, color_vec.r))); // clamp between 0 and 1
 			*(pixel_array + 1 + slot) = 255.f * (std::max(0.0f, std::min(1.0f, color_vec.g)));
 			*(pixel_array + 0 + slot) = 255.f * (std::max(0.0f, std::min(1.0f, color_vec.b)));
+			*/
+			// insert computed color into array for image
+			*(pixel_array + 2 + slot) = static_cast<unsigned int>(std::min(255 * color_vec.r, 255.0f)); // clamp between 0 and 1
+			*(pixel_array + 1 + slot) = static_cast<unsigned int>(std::min(255 * color_vec.g, 255.0f));
+			*(pixel_array + 0 + slot) = static_cast<unsigned int>(std::min(255 * color_vec.b, 255.0f));
 		}
 		temp = i;
 		int counter = temp %40;

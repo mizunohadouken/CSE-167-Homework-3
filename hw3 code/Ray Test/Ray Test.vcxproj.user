@@ -4,11 +4,13 @@
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommandArguments>testscenes\scene5_balls.test</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>testscenes\scene5.test</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerEnvironment>u</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LocalDebuggerCommandArguments>testscenes\scene5_balls.test</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>testscenes\scene5.test</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerEnvironment>u</LocalDebuggerEnvironment>
   </PropertyGroup>
 </Project>

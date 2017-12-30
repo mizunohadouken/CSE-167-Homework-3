@@ -28,6 +28,7 @@ ray primitive::inv_transform_ray(const ray & ray_to_inv) const
 
 	glm::vec4 ray_org_obj_space = m_transform_stack_inv * ray_org_hom;
 	glm::vec4 ray_dir_obj_space = m_transform_stack_inv * ray_dir_hom;
+	ray_dir_obj_space = glm::normalize(ray_dir_obj_space); // TODO I added this, does this ineed to be here?
 
 	// demogonize origin and input origin and direction into new ray
 	float inv_w = 1 / ray_org_obj_space.w;
@@ -165,10 +166,12 @@ glm::vec3 sphere::get_normal(glm::vec3 & intersect_point) const //TODO verify co
 	glm::vec4 dehom_obj_space_p = glm::vec4(obj_space_p.x * w_inv,
 										  obj_space_p.y * w_inv,
 										  obj_space_p.z * w_inv,
-										  0.f);
+										  obj_space_p.w * w_inv);
 
-	glm::vec4 obj_space_normal = dehom_obj_space_p - glm::vec4(center, 0.f); // TODO need to normalize?
+	glm::vec4 obj_space_normal = glm::normalize(dehom_obj_space_p - glm::vec4(center, 1.f)); // TODO need to normalize?
 	glm::vec4 world_space_normal = (glm::transpose(m_transform_stack_inv))*obj_space_normal;
+//	glm::vec4 world_space_normal = obj_space_normal * m_transform_stack_inv;
+
 
 	return glm::normalize(glm::vec3(world_space_normal.x, world_space_normal.y, world_space_normal.z));
 }
