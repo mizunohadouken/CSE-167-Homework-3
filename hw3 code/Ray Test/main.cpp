@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 			*(pixel_array + 0 + slot) = static_cast<unsigned int>(std::min(255 * color_vec.b, 255.0f));
 		}
 		temp = i;
-		int counter = temp %40;
+		int counter = temp %10;
 		if (counter == 0) std::cout << "Tracing pixel row: " << i << "\n";
 	}
 	
